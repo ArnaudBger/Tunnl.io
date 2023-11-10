@@ -9,7 +9,17 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "angular",
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "MavericksFive",
+      "name": "0x_mavericks",
+      "avatar_url": "https://avatars.githubusercontent.com/u/95299145?v=4",
+      "profile": "https://github.com/MavericksFive",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
   "linkToUsage": true
 }
