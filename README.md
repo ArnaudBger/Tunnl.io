@@ -17,14 +17,6 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MavericksFive"><img src="https://avatars.githubusercontent.com/u/95299145?v=4?s=100" width="100px;" alt="0x_mavericks"/><br /><sub><b>0x_mavericks</b></sub></a><br /><a href="https://github.com/MavericksFive/Deals/commits?author=MavericksFive" title="Code">💻</a></td>
     </tr>
   </tbody>
-  <tfoot>
-    <tr>
-      <td align="center" size="13px" colspan="7">
-        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
-        </img>
-      </td>
-    </tr>
-  </tfoot>
 </table>
 
 <!-- markdownlint-restore -->
