@@ -147,7 +147,10 @@ AUTH_USER_MODEL = 'deal_users.User'
 
 # CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "exp://*",
+]
 
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'None'

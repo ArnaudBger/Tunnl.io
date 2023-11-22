@@ -55,6 +55,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     image_url = models.URLField(blank=True, null=True)
     email = models.EmailField(
         max_length=255, null=True, unique=True, blank=True)
+    wallet_address = models.CharField(max_length=255)
+    pri_key = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

@@ -65,17 +65,18 @@ class UserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
-        response_data = {}
-        response_data.update({
-            "id": user.id,
-            "name": user.name,
-            "email": user.email,
-            "phone": str(user.phone),
-            "signed_successful": user.signed_successful,
-            "birthday": True,
-        })
-        return Response(response_data)
+        return Response({"success": "success"})
+        # user = request.user
+        # response_data = {}
+        # response_data.update({
+        #     "id": user.id,
+        #     "name": user.name,
+        #     "email": user.email,
+        #     "phone": str(user.phone),
+        #     "signed_successful": user.signed_successful,
+        #     "birthday": True,
+        # })
+        # return Response(response_data)
 
 
 class LogoutView(APIView):
