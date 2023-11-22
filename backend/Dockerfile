@@ -25,5 +25,5 @@ USER dealrestapiuser
 COPY . /code/
 
 # Run the application
-CMD ["uwsgi", "--http", "0.0.0.0:8000", "--module", "sia.wsgi", "--master", "--processes", "32", "--threads", "16", "--honour-stdin"]
+CMD ["uwsgi", "--http", "0.0.0.0:8000", "--module", "deal.wsgi", "--master", "--processes", "32", "--threads", "16", "--honour-stdin"]
 
