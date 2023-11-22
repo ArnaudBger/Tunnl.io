@@ -61,8 +61,8 @@ class LoginView(APIView):
 
 
 class UserView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         return Response({"success": "success"})
