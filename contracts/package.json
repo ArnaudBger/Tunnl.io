@@ -23,7 +23,6 @@
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.1",
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
-    "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@nomiclabs/hardhat-ethers": "^2.2.2",
     "@nomiclabs/hardhat-etherscan": "^3.1.0",
@@ -65,6 +64,7 @@
     "printWidth": 120
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.9",
     "hardhat": "^2.19.1"
   }
 }

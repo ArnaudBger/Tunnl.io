@@ -296,6 +296,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   // Influencer signs the deal
   function signDeal(uint256 _dealId) external {
     Deal storage deal = deals[_dealId];
+    require(deal.status == DealStatus.Active, "The deal was deleted");
     require(msg.sender == deal.influencer, "Only the designated influencer can sign the deal");
     require(!deal.influencerSigned, "Deal already signed");
     deal.postDeadline = block.timestamp + deal.timeToPost;
@@ -307,7 +308,6 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   function postContent(uint256 _dealId, string memory _postURL) external {
     Deal storage deal = deals[_dealId];
     require(msg.sender == deal.influencer, "Only influencer can post content");
-    require(block.timestamp <= deal.postDeadline, "Posting period has expired");
     require(deal.influencerSigned, "Influencer must sign the deal first");
     deal.verifyDeadline = block.timestamp + deal.timeToVerify;
     deal.postURL = _postURL;
@@ -359,7 +359,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     require(
       (keccak256(abi.encodePacked(deal.postURL)) == keccak256(abi.encodePacked(""))) &&
         (block.timestamp >= deal.postDeadline),
-      "Content not posted by the influencer or posting deadline passed"
+      "Content posted by the influencer before the post deadLine"
     );
 
     // Calculate the amount to be refunded
