@@ -13,5 +13,5 @@ task("deploy-stable-coin", "Deploys the `stable coin` contract")
 
     const contractAddress = StableCoinContract.address
 
-    console.log(`\nAutomatedFunctionsConsumer contract deployed to ${contractAddress} on ${network.name}`)
+    console.log(`\n STC contract deployed to ${contractAddress} on ${network.name}`)
   })

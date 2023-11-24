@@ -26,50 +26,50 @@ task("functions-deploy-auto-consumer", "Deploys the AutomatedFunctionsConsumer c
     const subscriptionId = taskArgs.subid
 
     // Initialize SubscriptionManager
-    const subManager = new SubscriptionManager({ signer, linkTokenAddress, functionsRouterAddress })
-    await subManager.initialize()
+    // const subManager = new SubscriptionManager({ signer, linkTokenAddress, functionsRouterAddress })
+    // await subManager.initialize()
 
     console.log(`Deploying AutomatedFunctionsConsumer contract to ${network.name}`)
-    const autoConsumerContractFactory = await ethers.getContractFactory("AutomatedFunctionsConsumer")
-    const autoConsumerContract = await autoConsumerContractFactory.deploy(functionsRouterAddress, donIdBytes32)
+    const autoConsumerContractFactory = await ethers.getContractFactory("InfluencerMarketingContract")
+    const autoConsumerContract = await autoConsumerContractFactory.deploy(functionsRouterAddress, donIdBytes32, "0xA06d06E950039140Ef1B8ad006BA4C42931792fb")
 
     console.log(`\nWaiting 1 block for transaction ${autoConsumerContract.deployTransaction.hash} to be confirmed...`)
     await autoConsumerContract.deployTransaction.wait(1)
 
     const consumerAddress = autoConsumerContract.address
 
-    console.log(`\nAdding ${consumerAddress} to subscription ${subscriptionId}...`)
-    const addConsumerTx = await subManager.addConsumer({ subscriptionId, consumerAddress, txOptions })
-    console.log(`\nAdded consumer contract ${consumerAddress} in Tx: ${addConsumerTx.transactionHash}`)
+    // console.log(`\nAdding ${consumerAddress} to subscription ${subscriptionId}...`)
+    // const addConsumerTx = await subManager.addConsumer({ subscriptionId, consumerAddress, txOptions })
+    // console.log(`\nAdded consumer contract ${consumerAddress} in Tx: ${addConsumerTx.transactionHash}`)
 
-    const verifyContract = taskArgs.verify
-    if (
-      network.name !== "localFunctionsTestnet" &&
-      verifyContract &&
-      !!networks[network.name].verifyApiKey &&
-      networks[network.name].verifyApiKey !== "UNSET"
-    ) {
-      try {
-        console.log(`\nVerifying contract ${consumerAddress}...`)
-        await autoConsumerContract.deployTransaction.wait(Math.max(6 - networks[network.name].confirmations, 0))
-        await run("verify:verify", {
-          address: consumerAddress,
-          constructorArguments: [functionsRouterAddress, donIdBytes32],
-        })
-        console.log("Contract verified")
-      } catch (error) {
-        if (!error.message.includes("Already Verified")) {
-          console.log("Error verifying contract.  Delete the build folder and try again.")
-          console.log(error)
-        } else {
-          console.log("Contract already verified")
-        }
-      }
-    } else if (verifyContract && network.name !== "localFunctionsTestnet") {
-      console.log(
-        "\nPOLYGONSCAN_API_KEY, ETHERSCAN_API_KEY or FUJI_SNOWTRACE_API_KEY is missing. Skipping contract verification..."
-      )
-    }
+    // const verifyContract = taskArgs.verify
+    // if (
+    //   network.name !== "localFunctionsTestnet" &&
+    //   verifyContract &&
+    //   !!networks[network.name].verifyApiKey &&
+    //   networks[network.name].verifyApiKey !== "UNSET"
+    // ) {
+    //   try {
+    //     console.log(`\nVerifying contract ${consumerAddress}...`)
+    //     await autoConsumerContract.deployTransaction.wait(Math.max(6 - networks[network.name].confirmations, 0))
+    //     await run("verify:verify", {
+    //       address: consumerAddress,
+    //       constructorArguments: [functionsRouterAddress, donIdBytes32],
+    //     })
+    //     console.log("Contract verified")
+    //   } catch (error) {
+    //     if (!error.message.includes("Already Verified")) {
+    //       console.log("Error verifying contract.  Delete the build folder and try again.")
+    //       console.log(error)
+    //     } else {
+    //       console.log("Contract already verified")
+    //     }
+    //   }
+    // } else if (verifyContract && network.name !== "localFunctionsTestnet") {
+    //   console.log(
+    //     "\nPOLYGONSCAN_API_KEY, ETHERSCAN_API_KEY or FUJI_SNOWTRACE_API_KEY is missing. Skipping contract verification..."
+    //   )
+    // }
 
     console.log(`\nAutomatedFunctionsConsumer contract deployed to ${consumerAddress} on ${network.name}`)
   })

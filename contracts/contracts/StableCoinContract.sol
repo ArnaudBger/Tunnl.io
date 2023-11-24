@@ -24,6 +24,6 @@ contract SimpleStableCoin is ERC20 {
   }
 
   function mintToken() external {
-    _mint(msg.sender, 10000);
+    _mint(msg.sender, 10000000000000000000000); // 10_000 STC minted to the caller address
   }
 }

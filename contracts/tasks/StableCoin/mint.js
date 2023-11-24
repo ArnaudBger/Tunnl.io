@@ -1,38 +1,22 @@
-const { networks } = require("../../networks")
+const { BigNumber } = require('ethers');
 
-task("mint", "Manually call performUpkeep in an Automation compatible contract")
-  .addParam("contract", "Address of the contract to call")
-  .addOptionalParam(
-    "data",
-    "Hex string representing bytes that are passed to the performUpkeep function (defaults to empty bytes)"
-  )
+task("mint-stc", "Prints an account's balance")
+  .addParam("account", "The account's address")
+  .addParam("contract", "The stable coin contract address")
   .setAction(async (taskArgs) => {
-    // A manual gas limit is required as the gas limit estimated by Ethers is not always accurate
-    const overrides = {
-      gasLimit: 1000000,
-      gasPrice: networks[network.name].gasPrice,
-    }
+    const stcContractFactory = await ethers.getContractFactory("SimpleStableCoin")
+    const stcContract = await stcContractFactory.attach(taskArgs.contract)
+    const stcDecimals = await stcContract.decimals()
 
-    // Call performUpkeep
-    const performData = taskArgs.data ?? []
+    const mintToken = await stcContract.mintToken()
+    console.log(`\nWaiting 1 block for transaction ${mintToken.hash} to be confirmed...`)
+    await stcDecimals.wait(1)
 
-    console.log(
-      `Calling performUpkeep for Automation consumer contract ${taskArgs.contract} on network ${network.name}${
-        taskArgs.data ? ` with data ${performData}` : ""
-      }`
-    )
-    const autoConsumerContractFactory = await ethers.getContractFactory("AutomatedFunctionsConsumer")
-    const autoConsumerContract = await autoConsumerContractFactory.attach(taskArgs.contract)
-
-    const checkUpkeep = await autoConsumerContract.performUpkeep(performData, overrides)
-
-    console.log(
-      `Waiting ${networks[network.name].confirmations} blocks for transaction ${checkUpkeep.hash} to be confirmed...`
-    )
-    await checkUpkeep.wait(networks[network.name].confirmations)
-
-    console.log(`\nSuccessfully called performUpkeep`)
-
-    const reqId = await autoConsumerContract.s_lastRequestId()
-    console.log("\nLast request ID received by the Automation Consumer Contract...", reqId)
+    const balance = await stcContract.balanceOf(taskArgs.account)
+    const balanceBigNumber = BigNumber.from(balance);
+    const realBalance = balanceBigNumber.mul(BigNumber.from(10).pow(stcDecimals));
+    console.log(realBalance, "STC")
   })
+
+module.exports = {}
+

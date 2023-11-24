@@ -1,3 +1,5 @@
+const { ethers } = require('ethers');
+
 // All supported networks and related contract addresses are defined here.
 //
 // LINK token addresses: https://docs.chain.link/resources/link-token-contracts/
@@ -18,6 +20,8 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY
 // TODO @dev - set this to run the accept.js task.
 const SECOND_PRIVATE_KEY = process.env.SECOND_PRIVATE_KEY
 
+const THIRD_PRIVATE_KEY = process.env.THIRD_PRIVATE_KEY
+
 if (!isTestEnvironment && !PRIVATE_KEY) {
   throw Error("Set the PRIVATE_KEY environment variable with your EVM wallet private key")
 }
@@ -28,6 +32,10 @@ if (PRIVATE_KEY) {
 }
 if (SECOND_PRIVATE_KEY) {
   accounts.push(SECOND_PRIVATE_KEY)
+}
+
+if (THIRD_PRIVATE_KEY) {
+  accounts.push(THIRD_PRIVATE_KEY)
 }
 
 const networks = {
