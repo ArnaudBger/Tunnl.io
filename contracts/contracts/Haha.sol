@@ -77,7 +77,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   }
 
   // Define a new role for Haha Labs' administrator
-  address public hahaLabsAdmin;
+  address public hahaLabsVerifier;
 
   // Define the hahaLabsTreasury
   address public hahaLabsTreasury;
@@ -109,7 +109,8 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     address _tokenAddress
   ) FunctionsClient(router) ConfirmedOwner(msg.sender) {
     donId = _donId;
-    hahaLabsAdmin = msg.sender; // Initially set to the contract creator
+    hahaLabsVerifier = msg.sender; // Initially set to the contract creator
+    hahaLabsTreasury = msg.sender; // Initially set to the contract creator
     s_lastUpkeepTimeStamp = 0;
     stableCoinAddress = _tokenAddress;
   }
@@ -202,13 +203,19 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   // SMART CONTRACT LOGIC //
 
   // Function to set or change Haha Labs' admin
-  function setHahaLabsAdmin(address _newAdmin) external onlyOwner {
-    hahaLabsAdmin = _newAdmin;
+  function setHahaLabsVerifier(address _newVerifier) external onlyOwner {
+    hahaLabsVerifier = _newVerifier;
+  }
+
+
+  // Function to set or change Haha Labs' admin
+  function setHahaLabsTreasury(address _newTreasurery) external onlyOwner {
+    hahaLabsTreasury = _newTreasurery;
   }
 
   // Function for Haha Labs to verify disputed content
   function verifyDisputedContent(uint256 _dealId, bool _isAccepted) external {
-    require(msg.sender == hahaLabsAdmin, "Only Haha Labs' admin can verify content");
+    require(msg.sender == hahaLabsVerifier, "Only Haha Labs' verifier can verify content");
     Deal storage deal = deals[_dealId];
     require(deal.isDisputed, "Content is not disputed");
 
@@ -221,7 +228,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
       uint256 hahaLabsFee = (deal.brandDeposit * 5) / 100; // 5% as verification fee
 
       // Ensure the total amount does not exceed the brand deposit
-      require(influencerAmount + hahaLabsFee == deal.brandDeposit, "Total transfer amount exceeds deposit");
+      require(influencerAmount + hahaLabsFee <= deal.brandDeposit, "Total transfer amount exceeds deposit");
 
       // Transfer funds
       _payAddress(deal.influencer, influencerAmount);
@@ -264,9 +271,8 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     bytes32 _expectedContentHash
   ) external payable {
     IStableCoin token = IStableCoin(stableCoinAddress);
-    uint8 stcDecimals = IStableCoin(stableCoinAddress).decimals();
 
-    require(token.transferFrom(msg.sender, address(this), _brandDeposit * 10 ** stcDecimals), "Tokens transfer failed");
+    require(token.transferFrom(msg.sender, address(this), _brandDeposit), "Tokens transfer failed");
 
     deals[nextDealId] = Deal({
       brand: msg.sender,
@@ -296,7 +302,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   // Influencer signs the deal
   function signDeal(uint256 _dealId) external {
     Deal storage deal = deals[_dealId];
-    require(deal.status == DealStatus.Active, "The deal was deleted");
+    require(deal.status == DealStatus.Active, "The deal was deleted or is already done");
     require(msg.sender == deal.influencer, "Only the designated influencer can sign the deal");
     require(!deal.influencerSigned, "Deal already signed");
     deal.postDeadline = block.timestamp + deal.timeToPost;
@@ -309,6 +315,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     Deal storage deal = deals[_dealId];
     require(msg.sender == deal.influencer, "Only influencer can post content");
     require(deal.influencerSigned, "Influencer must sign the deal first");
+    require(deal.status == DealStatus.Active, "The deal was deleted or is already done");
     deal.verifyDeadline = block.timestamp + deal.timeToVerify;
     deal.postURL = _postURL;
     emit ContentPosted(_dealId, _postURL);
@@ -318,7 +325,11 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   function acceptContent(uint256 _dealId) external {
     Deal storage deal = deals[_dealId];
     require(msg.sender == deal.brand, "Only brand can accept content");
-    require(block.timestamp <= deal.postDeadline, "Verification period has expired");
+
+    // Check if the content is posted
+    require(deal.verifyDeadline != 0, "Content has not been posted yet");
+
+    require(block.timestamp <= deal.verifyDeadline, "Verification period has expired");
     deal.isAccepted = true;
     deal.performDeadline = block.timestamp + deal.timeToPerform;
 
@@ -334,19 +345,14 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     emit ContentAccepted(_dealId);
   }
 
-  function calculateBucket(uint256 performDeadline) internal pure returns (uint256) {
-    uint256 bucketDuration = 1 days; // 24 hours
-    uint256 bucketNumber = performDeadline / bucketDuration;
-    return bucketNumber;
-  }
-
   // Brand dispute the content
   function disputeContent(uint256 _dealId) external {
     Deal storage deal = deals[_dealId];
     require(msg.sender == deal.brand, "Only brand can dispute content");
+    // Check if the content is posted
+    require(deal.verifyDeadline != 0, "Content has not been posted yet");
     require(block.timestamp <= deal.verifyDeadline, "Verification period has expired");
     deal.isDisputed = true;
-    deal.performDeadline = block.timestamp + deal.timeToPerform;
     emit ContentDisputed(_dealId);
   }
 
@@ -411,15 +417,19 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     return currentBucket;
   }
 
+  function calculateBucket(uint256 performDeadline) internal pure returns (uint256) {
+    uint256 bucketDuration = 1 days; // 24 hours
+    uint256 bucketNumber = performDeadline / bucketDuration;
+    return bucketNumber;
+  }
   //Pay the mentionned address with contracts funds
   function _payAddress(address recipient, uint256 amount) internal {
     IStableCoin token = IStableCoin(stableCoinAddress);
-    uint8 stcDecimals = IStableCoin(stableCoinAddress).decimals();
 
     require(recipient != address(0), "Invalid recipient address");
     require(amount > 0, "Amount must be greater than zero");
 
     // Assuming `stableCoin` is your ERC20 token instance
-    require(token.transfer(recipient, amount * 10 ** stcDecimals), "Token transfer failed");
+    require(token.transfer(recipient, amount), "Token transfer failed");
   }
 }
