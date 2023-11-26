@@ -39,9 +39,7 @@ describe("Brand-Influencer deal functions tests", function () {
           const timeToPost = 3600; // in seconds
           const timeToVerify = 3600; // in seconds
           const timeToPerform = 3600; // in seconds
-          const targetType = 0; // assuming 0 is one of the enum values for TargetType
           const impressionsTarget = 1000;
-          const likesTarget = 500;
           const expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
           let initialDealCount = await contract.nextDealId();
@@ -52,9 +50,7 @@ describe("Brand-Influencer deal functions tests", function () {
               timeToPost,
               timeToVerify,
               timeToPerform,
-              targetType,
               impressionsTarget,
-              likesTarget,
               expectedContentHash,
               {gasLimit, gasPrice}
 
@@ -77,9 +73,7 @@ describe("Brand-Influencer deal functions tests", function () {
       let timeToPost;
       let timeToVerify;
       let timeToPerform;
-      let targetType;
       let impressionsTarget;
-      let likesTarget;
       let expectedContentHash;
 
       beforeEach(async function () {
@@ -93,9 +87,7 @@ describe("Brand-Influencer deal functions tests", function () {
         timeToPost = 3600; // in seconds
         timeToVerify = 3600; // in seconds
         timeToPerform = 3600; // in seconds
-        targetType = 0; // assuming 0 is one of the enum values for TargetType
         impressionsTarget = 1000;
-        likesTarget = 500;
         expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
         // Get the deal id
@@ -109,9 +101,7 @@ describe("Brand-Influencer deal functions tests", function () {
             timeToPost,
             timeToVerify,
             timeToPerform,
-            targetType,
             impressionsTarget,
-            likesTarget,
             expectedContentHash,
             {gasLimit, gasPrice}
 
@@ -155,9 +145,7 @@ describe("Brand-Influencer deal functions tests", function () {
       let timeToPost;
       let timeToVerify;
       let timeToPerform;
-      let targetType;
       let impressionsTarget;
-      let likesTarget;
       let expectedContentHash;
 
       beforeEach(async function () {
@@ -171,9 +159,7 @@ describe("Brand-Influencer deal functions tests", function () {
         timeToPost = 3600; // in seconds
         timeToVerify = 3600; // in seconds
         timeToPerform = 3600; // in seconds
-        targetType = 0; // assuming 0 is one of the enum values for TargetType
         impressionsTarget = 1000;
-        likesTarget = 500;
         expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
         // Get the deal id
@@ -187,9 +173,7 @@ describe("Brand-Influencer deal functions tests", function () {
             timeToPost,
             timeToVerify,
             timeToPerform,
-            targetType,
             impressionsTarget,
-            likesTarget,
             expectedContentHash,
             {gasLimit, gasPrice}
 
@@ -253,9 +237,7 @@ describe("Brand-Influencer deal functions tests", function () {
         timeToPost = 3600; // in seconds
         timeToVerify = 3600; // in seconds
         timeToPerform = 3600; // in seconds
-        targetType = 0; // assuming 0 is one of the enum values for TargetType
         impressionsTarget = 1000;
-        likesTarget = 500;
         expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
         // Get the deal id
@@ -269,9 +251,7 @@ describe("Brand-Influencer deal functions tests", function () {
             timeToPost,
             timeToVerify,
             timeToPerform,
-            targetType,
             impressionsTarget,
-            likesTarget,
             expectedContentHash,
             {gasLimit, gasPrice}
 
@@ -328,9 +308,7 @@ describe("Brand-Influencer deal functions tests", function () {
         timeToPost = 3600; // in seconds
         timeToVerify = 3600; // in seconds
         timeToPerform = 3600; // in seconds
-        targetType = 0; // assuming 0 is one of the enum values for TargetType
         impressionsTarget = 1000;
-        likesTarget = 500;
         expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
         // Get the deal id
@@ -344,9 +322,7 @@ describe("Brand-Influencer deal functions tests", function () {
             timeToPost,
             timeToVerify,
             timeToPerform,
-            targetType,
             impressionsTarget,
-            likesTarget,
             expectedContentHash,
             {gasLimit, gasPrice}
 
@@ -417,9 +393,7 @@ describe("Brand-Influencer deal functions tests", function () {
         timeToPost = 3600; // in seconds
         timeToVerify = 3600; // in seconds
         timeToPerform = 3600; // in seconds
-        targetType = 0; // assuming 0 is one of the enum values for TargetType
         impressionsTarget = 1000;
-        likesTarget = 500;
         expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
         // Get the deal id
@@ -433,9 +407,7 @@ describe("Brand-Influencer deal functions tests", function () {
             timeToPost,
             timeToVerify,
             timeToPerform,
-            targetType,
             impressionsTarget,
-            likesTarget,
             expectedContentHash,
             {gasLimit, gasPrice});
 
@@ -509,9 +481,7 @@ describe("Brand-Influencer deal functions tests", function () {
         timeToPost = 3600; // in seconds
         timeToVerify = 3600; // in seconds
         timeToPerform = 3600; // in seconds
-        targetType = 0; // assuming 0 is one of the enum values for TargetType
         impressionsTarget = 1000;
-        likesTarget = 500;
         expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
         // Get the deal id
@@ -525,9 +495,7 @@ describe("Brand-Influencer deal functions tests", function () {
             timeToPost,
             timeToVerify,
             timeToPerform,
-            targetType,
             impressionsTarget,
-            likesTarget,
             expectedContentHash,
             {gasLimit, gasPrice});
 
@@ -600,9 +568,7 @@ describe("Brand-Influencer deal functions tests", function () {
         timeToPost = 3600; // in seconds
         timeToVerify = 3600; // in seconds
         timeToPerform = 3600; // in seconds
-        targetType = 0; // assuming 0 is one of the enum values for TargetType
         impressionsTarget = 1000;
-        likesTarget = 500;
         expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
 
         // Get the deal id
@@ -616,9 +582,7 @@ describe("Brand-Influencer deal functions tests", function () {
             timeToPost,
             timeToVerify,
             timeToPerform,
-            targetType,
             impressionsTarget,
-            likesTarget,
             expectedContentHash,
             {gasLimit, gasPrice});
 

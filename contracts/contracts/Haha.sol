@@ -44,11 +44,6 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
    * @param _donId The DON Id for the DON that will execute the Function
    */
 
-  enum TargetType {
-    Impressions,
-    Likes,
-    Both
-  }
   enum DealStatus {
     Done,
     Active,
@@ -63,9 +58,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     string postURL;
     uint256 timeToVerify;
     uint256 timeToPerform;
-    TargetType targetType;
     uint256 impressionsTarget;
-    uint256 likesTarget;
     bool isAccepted;
     bool isDisputed;
     bool influencerSigned;
@@ -169,7 +162,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
    */
   function performUpkeep(bytes calldata) external override {
     (bool upkeepNeeded, ) = checkUpkeep("");
-    require(upkeepNeeded, "Time interval not met");
+    require(upkeepNeeded, "Condition not met");
     s_lastUpkeepTimeStamp = block.timestamp;
     s_upkeepCounter = s_upkeepCounter + 1;
 
@@ -206,7 +199,6 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   function setHahaLabsVerifier(address _newVerifier) external onlyOwner {
     hahaLabsVerifier = _newVerifier;
   }
-
 
   // Function to set or change Haha Labs' admin
   function setHahaLabsTreasury(address _newTreasurery) external onlyOwner {
@@ -265,9 +257,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     uint256 _timeToPost,
     uint256 _timeToVerify,
     uint256 _timeToPerform,
-    TargetType _targetType,
     uint256 _impressionsTarget,
-    uint256 _likesTarget,
     bytes32 _expectedContentHash
   ) external payable {
     IStableCoin token = IStableCoin(stableCoinAddress);
@@ -285,9 +275,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
       postURL: "",
       timeToVerify: _timeToVerify,
       timeToPerform: _timeToPerform,
-      targetType: _targetType,
       impressionsTarget: _impressionsTarget,
-      likesTarget: _likesTarget,
       isAccepted: false,
       isDisputed: false,
       influencerSigned: false,
@@ -333,6 +321,9 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     deal.isAccepted = true;
     deal.performDeadline = block.timestamp + deal.timeToPerform;
 
+    // Check if the content was already verify
+    require(deal.performDeadline == 0, "Content has been verified already");
+
     // Set the performDeadline
     uint256 performDeadline = block.timestamp + deal.timeToPerform;
 
@@ -351,7 +342,12 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     require(msg.sender == deal.brand, "Only brand can dispute content");
     // Check if the content is posted
     require(deal.verifyDeadline != 0, "Content has not been posted yet");
+
     require(block.timestamp <= deal.verifyDeadline, "Verification period has expired");
+
+    // Check if the content was already verify
+    require(deal.performDeadline == 0, "Content has been verified already");
+
     deal.isDisputed = true;
     emit ContentDisputed(_dealId);
   }
@@ -422,6 +418,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     uint256 bucketNumber = performDeadline / bucketDuration;
     return bucketNumber;
   }
+
   //Pay the mentionned address with contracts funds
   function _payAddress(address recipient, uint256 amount) internal {
     IStableCoin token = IStableCoin(stableCoinAddress);
