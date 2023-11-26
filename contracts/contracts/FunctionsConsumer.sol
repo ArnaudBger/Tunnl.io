@@ -52,6 +52,7 @@ contract FunctionsConsumer is FunctionsClient, ConfirmedOwner {
     req.initializeRequest(FunctionsRequest.Location.Inline, FunctionsRequest.CodeLanguage.JavaScript, source);
     req.secretsLocation = secretsLocation;
     req.encryptedSecretsReference = encryptedSecretsReference;
+    
     if (args.length > 0) {
       req.setArgs(args);
     }

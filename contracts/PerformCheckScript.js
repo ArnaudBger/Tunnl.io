@@ -1,15 +1,17 @@
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
-const postURL = args[0]
+const dealID = args[0]
 const impressionsTarget = args[1]
+const postURL = args[2]
+
 
 //CHECK FEW THINGS
 
-let BrandPercentage, InfluencerPercentage, dealID = await getPostPerformance(twitterID)
+let [brandPercentage, influencerPercentage] = await getPostPerformance(postURL)
 
 return Buffer.concat([
-  Functions.encodeUint256(parseInt(BrandPercentage)),
-  Functions.encodeUint256(parseInt(InfluencerPercentage)),
   Functions.encodeUint256(parseInt(dealID)),
+  Functions.encodeUint256(parseInt(brandPercentage)),
+  Functions.encodeUint256(parseInt(influencerPercentage))
 ])
 
 
@@ -19,7 +21,7 @@ return Buffer.concat([
 
 
 /// GET THE INSTAGRAM POST PERFORMANCE
-async function getPostPerformance(twitterID) {
+async function getPostPerformance(postURL) {
 //   console.log("\nFetching tweet information...")
 //   if (!secrets.instagramApiKey) {
 //     throw new Error('Need to set Instagram API key environment variable')
@@ -46,12 +48,16 @@ async function getPostPerformance(twitterID) {
 
   // INSTAGRAM API GETTING DATA LOGIC
 
-  let impressions_count = 30000
+  let impressionsCount = 300
+  let influencerPercentage
 
-  let BrandPercentage = Math.round(impressions_count/impressionsTarget) * 100;
-  let InfluencerPercentage = 100 - BrandPercentage;
+  if (impressionsCount >= impressionsTarget) {
+    influencerPercentage = 100
+  } else {
+    influencerPercentage = Math.round(impressionsCount/impressionsTarget) * 100;
+  }
 
-  console.log(BrandPercentage)
+  let brandPercentage = 100 - influencerPercentage;
 
-  return (BrandPercentage, InfluencerPercentage, dealID)
+  return [brandPercentage, influencerPercentage]
 }

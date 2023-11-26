@@ -18,6 +18,9 @@ describe("Chainlink functions related functions tests", function () {
 
         InfluencerMarketingContract = await ethers.getContractFactory("InfluencerMarketingContract");
         [owner, brand, influencer] = await ethers.getSigners();
+        StableCoinContract = await ethers.getContractFactory("SimpleStableCoin");
+
+        stcContract = await StableCoinContract.deploy();
 
         contract = await InfluencerMarketingContract.deploy(randomAddress, randomBytes , stcContract.address);
     });

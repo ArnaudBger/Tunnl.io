@@ -13,15 +13,6 @@ const SOLC_SETTINGS = {
   },
 }
 
-const SOLC_SETTINGS_viaIR = {
-  optimizer: {
-    enabled: true,
-    runs: 1_000,
-  },
-  viaIR: true,
-}
-
-
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -30,7 +21,7 @@ module.exports = {
     compilers: [
       {
         version: "0.8.19",
-        settings: SOLC_SETTINGS_viaIR,
+        settings: SOLC_SETTINGS,
       },
       {
         version: "0.8.7",
