@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "InfluencerMarketingContract": {
+      "address": "0x9d8A72E443C024e36d7BA736a82085b33361e254",
+      "startBlock": 4776665
+    }
+  }
+}

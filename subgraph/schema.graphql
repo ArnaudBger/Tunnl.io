@@ -1,0 +1,114 @@
+type ContentAccepted @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ContentDisputed @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type ContentPosted @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  postURL: String! # string
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DealCompleted @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  influencerAmount: BigInt! # uint256
+  brandAmount: BigInt! # uint256
+  treasuryAmount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DealCreated @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  param1_brand: Bytes! # address
+  param1_influencer: Bytes! # address
+  param1_brandDeposit: BigInt! # uint256
+  param1_status: Int! # uint8
+  param2_timeToPost: BigInt! # uint256
+  param2_timeToVerify: BigInt! # uint256
+  param2_timeToPerform: BigInt! # uint256
+  param2_postDeadline: BigInt! # uint256
+  param2_verifyDeadline: BigInt! # uint256
+  param2_performDeadline: BigInt! # uint256
+  param3_postURL: String! # string
+  param3_impressionsTarget: BigInt! # uint256
+  param3_isAccepted: Boolean! # bool
+  param3_isDisputed: Boolean! # bool
+  param3_influencerSigned: Boolean! # bool
+  param3_expectedContentHash: Bytes! # bytes32
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DealSigned @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DepositRefunded @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type DisputedContentVerified @entity(immutable: true) {
+  id: Bytes!
+  dealId: BigInt! # uint256
+  isAccepted: Boolean! # bool
+  influencerAmount: BigInt! # uint256
+  brandAmount: BigInt! # uint256
+  treasuryAmount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Deal @entity {
+  id: ID! # Unique identifier, typically the dealId
+  dealId: BigInt! # The deal's unique ID
+  brand: User! # Reference to the brand involved in the deal
+  influencer: User! # Reference to the influencer involved in the deal
+  brandDeposit: BigInt! # Deposit amount from the brand
+  postURL: String # URL of the posted content
+  status: String! # Current status of the deal (Active, Failed, etc.)
+  expectedContentHash: Bytes! # Expected content hash defined before creating the deal
+  
+  #Deal evolution based on different events
+  contentPosted: [ContentPosted!] @derivedFrom(field: "deal")
+  dealSigned: [DealSigned!] @derivedFrom(field: "deal")
+  contentAccepted: [ContentAccepted!] @derivedFrom(field: "deal")
+  contentDisputed: [ContentDisputed!] @derivedFrom(field: "deal")
+  dealCompleted: [DealCompleted!] @derivedFrom(field: "deal")
+  depositRefunded: [DepositRefunded!] @derivedFrom(field: "deal")
+  disputedContentVerified: [DisputedContentVerified!] @derivedFrom(field: "deal")
+}
+
+type User @entity {
+  id: Bytes!
+  address: Bytes! # Ethereum address of the user
+  dealsAsBrand: [Deal!]! @derivedFrom(field: "brand")
+  dealsAsInfluencer: [Deal!]! @derivedFrom(field: "influencer")
+}

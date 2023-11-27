@@ -94,20 +94,24 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
 
   uint256 public nextDealId;
 
-  event DealCreated(uint256 indexed dealId, address indexed brand, address indexed influencer);
-  event DealSigned(uint256 indexed dealId, address indexed influencer);
+  event DealCreated(uint256 indexed dealId, DealBasics, DealDeadlines, DealDetails);
+  event DealSigned(uint256 indexed dealId);
   event ContentPosted(uint256 indexed dealId, string postURL);
   event ContentAccepted(uint256 indexed dealId);
   event ContentDisputed(uint256 indexed dealId);
-  event DepositRefunded(uint256 indexed dealId, address indexed brand, uint256 refundAmount);
+  event DepositRefunded(uint256 indexed dealId);
   event DisputedContentVerified(
     uint256 indexed dealId,
     bool isAccepted,
     uint256 influencerAmount,
     uint256 brandAmount,
-    uint256 hahaLabsAmount
+    uint256 treasuryAmount
   );
-  event DealCompleted(uint256 indexed dealId);
+  event DealCompleted(
+    uint256 indexed dealId,
+    uint256 influencerAmount,
+    uint256 brandAmount,
+    uint256 treasuryAmount);
 
   constructor(
     address router,
@@ -251,7 +255,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     _payAddress(hahaLabsTreasury, treasuryAmount);
 
     basics.status = DealStatus.Done;
-    emit DealCompleted(dealId);
+    emit DealCompleted(dealId, influencerAmount, brandAmount, treasuryAmount);
     emit OCRResponse(requestId, response, err);
   }
 
@@ -359,7 +363,12 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
       expectedContentHash: _expectedContentHash
     });
 
-    emit DealCreated(nextDealId, msg.sender, _influencer);
+    emit DealCreated(nextDealId,
+    dealBasics[nextDealId], 
+    dealDeadlines[nextDealId],
+    dealDetails[nextDealId]
+    );
+
     nextDealId++;
   }
 
@@ -375,7 +384,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     deadlines.postDeadline = block.timestamp + deadlines.timeToPost;
     details.influencerSigned = true;
 
-    emit DealSigned(_dealId, msg.sender);
+    emit DealSigned(_dealId);
   }
 
   function postContent(uint256 _dealId, string memory _postURL) external {
@@ -443,7 +452,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     basics.brandDeposit = 0;
     basics.status = DealStatus.Failed;
 
-    emit DepositRefunded(_dealId, msg.sender, refundAmount);
+    emit DepositRefunded(_dealId);
   }
 
   function deleteDeal(uint256 _dealId) external {
@@ -459,7 +468,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     _payAddress(basics.brand, refundAmount);
     basics.status = DealStatus.Failed;
 
-    emit DepositRefunded(_dealId, msg.sender, refundAmount);
+    emit DepositRefunded(_dealId);
   }
 
   //Pay the mentionned address with contracts funds

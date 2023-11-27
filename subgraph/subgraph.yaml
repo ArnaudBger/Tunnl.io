@@ -1,0 +1,60 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: InfluencerMarketingContract
+    network: sepolia
+    source:
+      address: "0x9d8A72E443C024e36d7BA736a82085b33361e254"
+      abi: InfluencerMarketingContract
+      startBlock: 4776665
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ContentAccepted
+        - ContentDisputed
+        - ContentPosted
+        - DealCompleted
+        - DealCreated
+        - DealSigned
+        - DepositRefunded
+        - DisputedContentVerified
+        - OCRResponse
+        - OwnershipTransferRequested
+        - OwnershipTransferred
+        - RequestFulfilled
+        - RequestSent
+      abis:
+        - name: InfluencerMarketingContract
+          file: ./abis/InfluencerMarketingContract.json
+      eventHandlers:
+        - event: ContentAccepted(indexed uint256)
+          handler: handleContentAccepted
+        - event: ContentDisputed(indexed uint256)
+          handler: handleContentDisputed
+        - event: ContentPosted(indexed uint256,string)
+          handler: handleContentPosted
+        - event: DealCompleted(indexed uint256,uint256,uint256,uint256)
+          handler: handleDealCompleted
+        - event: DealCreated(indexed uint256,(address,address,uint256,uint8),(uint256,uint256,uint256,uint256,uint256,uint256),(string,uint256,bool,bool,bool,bytes32))
+          handler: handleDealCreated
+        - event: DealSigned(indexed uint256)
+          handler: handleDealSigned
+        - event: DepositRefunded(indexed uint256)
+          handler: handleDepositRefunded
+        - event: DisputedContentVerified(indexed uint256,bool,uint256,uint256,uint256)
+          handler: handleDisputedContentVerified
+        - event: OCRResponse(indexed bytes32,bytes,bytes)
+          handler: handleOCRResponse
+        - event: OwnershipTransferRequested(indexed address,indexed address)
+          handler: handleOwnershipTransferRequested
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+        - event: RequestFulfilled(indexed bytes32)
+          handler: handleRequestFulfilled
+        - event: RequestSent(indexed bytes32)
+          handler: handleRequestSent
+      file: ./src/influencer-marketing-contract.ts
