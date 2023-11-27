@@ -90,7 +90,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   // Define the hahaLabsTreasury
   address public hahaLabsTreasury;
 
-  mapping(uint256 => uint256[]) public dealsInBucket; // Maps a time bucket to a list of deal IDs
+  uint256[] performDeals; //Deals which are the performance stage...
 
   uint256 public nextDealId;
 
@@ -107,6 +107,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     uint256 brandAmount,
     uint256 hahaLabsAmount
   );
+  event DealCompleted(uint256 indexed dealId);
 
   constructor(
     address router,
@@ -158,8 +159,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
    * second element contains custom bytes data which is passed to performUpkeep when it is called by Automation.
    */
   function checkUpkeep(bytes memory) public view override returns (bool upkeepNeeded, bytes memory) {
-    uint256 currentBucket = getCurrentBucket();
-    uint256[] storage dealsToCheck = dealsInBucket[currentBucket];
+    uint256[] storage dealsToCheck = performDeals;
 
     for (uint256 i = 0; i < dealsToCheck.length; i++) {
       uint256 dealId = dealsToCheck[i];
@@ -250,6 +250,8 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     _payAddress(basics.brand, brandAmount);
     _payAddress(hahaLabsTreasury, treasuryAmount);
 
+    basics.status = DealStatus.Done;
+    emit DealCompleted(dealId);
     emit OCRResponse(requestId, response, err);
   }
 
@@ -403,8 +405,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     details.isAccepted = true;
     deadlines.performDeadline = block.timestamp + deadlines.timeToPerform;
 
-    uint256 bucket = calculateBucket(deadlines.performDeadline);
-    dealsInBucket[bucket].push(_dealId);
+    performDeals.push(_dealId);
 
     emit ContentAccepted(_dealId);
   }
@@ -459,18 +460,6 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     basics.status = DealStatus.Failed;
 
     emit DepositRefunded(_dealId, msg.sender, refundAmount);
-  }
-
-  function getCurrentBucket() internal view returns (uint256) {
-    uint256 bucketDuration = 1 days;
-    uint256 currentBucket = block.timestamp / bucketDuration;
-    return currentBucket;
-  }
-
-  function calculateBucket(uint256 performDeadline) internal pure returns (uint256) {
-    uint256 bucketDuration = 1 days; // 24 hours
-    uint256 bucketNumber = performDeadline / bucketDuration;
-    return bucketNumber;
   }
 
   //Pay the mentionned address with contracts funds

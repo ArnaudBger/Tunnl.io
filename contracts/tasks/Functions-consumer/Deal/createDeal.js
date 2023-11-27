@@ -1,9 +1,9 @@
 const { types } = require("hardhat/config")
 const { networks } = require("../../../networks")
+const { BigNumber } = require('ethers');
 
 task("create-deal", "Creates a new deal")
   .addParam("influencer", "Influencer address")
-  .addParam("dealid", "ID of the deal")
   .addParam("contract", "Address of the contract")
   .addOptionalParam("verify", "Set to true to verify consumer contract", false, types.boolean)
   .addOptionalParam(
@@ -15,6 +15,12 @@ task("create-deal", "Creates a new deal")
   .setAction(async (taskArgs) => {
     console.log("\n__Compiling Contracts__")
     await run("compile")
+    
+    let gasLimit, gasPrice;
+
+    // Manually specify gas limit and gas price
+    gasLimit = ethers.utils.hexlify(1000000); // Example gas limit
+    gasPrice = ethers.utils.parseUnits("10", "gwei"); // Example gas price
 
     let brand, influencer
 
@@ -24,11 +30,11 @@ task("create-deal", "Creates a new deal")
     InfluencerMarketingContract = await ethers.getContractFactory("InfluencerMarketingContract");
     contract = await InfluencerMarketingContract.attach(taskArgs.contract);
 
-    let gasLimit, gasPrice;
+    StableCoinContract = await ethers.getContractFactory("SimpleStableCoin");
+    stcContract = await StableCoinContract.attach("0x4c48a47B87F4Fe3A38C5e3DdBB1e11110b6bc895");
+    stcDecimals = await stcContract.decimals();
 
-    // Manually specify gas limit and gas price
-    gasLimit = ethers.utils.hexlify(1000000); // Example gas limit
-    gasPrice = ethers.utils.parseUnits("10", "gwei"); // Example gas price
+    await stcContract.connect(brand).approve(contract.address, BigNumber.from(10000).pow(stcDecimals), {gasLimit,gasPrice})
 
      // Define parameters for createDeal function based on your contract's requirements
      const influencerAddress = influencer.address;
