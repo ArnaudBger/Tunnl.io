@@ -1,6 +1,6 @@
 specVersion: 0.0.5
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: InfluencerMarketingContract
@@ -29,7 +29,7 @@ dataSources:
         - RequestSent
       abis:
         - name: InfluencerMarketingContract
-          file: ./abis/InfluencerMarketingContract.json
+          file: InfluencerMarketingContract/abis/InfluencerMarketingContract.json
       eventHandlers:
         - event: ContentAccepted(indexed uint256)
           handler: handleContentAccepted
@@ -39,7 +39,8 @@ dataSources:
           handler: handleContentPosted
         - event: DealCompleted(indexed uint256,uint256,uint256,uint256)
           handler: handleDealCompleted
-        - event: DealCreated(indexed uint256,(ad(rv dress,address,uint256,uint8),(uint256,uint256,uint256,uint256,uint256,uint256),(string,uint256,bool,bool,bool,bytes32))
+        - event: DealCreated(indexed
+            uint256,(address,address,uint256,uint8),(uint256,uint256,uint256,uint256,uint256,uint256),(string,uint256,bool,bool,bool,bytes32))
           handler: handleDealCreated
         - event: DealSigned(indexed uint256)
           handler: handleDealSigned
@@ -47,4 +48,4 @@ dataSources:
           handler: handleDepositRefunded
         - event: DisputedContentVerified(indexed uint256,bool,uint256,uint256,uint256)
           handler: handleDisputedContentVerified
-      file: ./src/influencer-marketing-contract.ts
+      file: InfluencerMarketingContract/InfluencerMarketingContract.wasm
