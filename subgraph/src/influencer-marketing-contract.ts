@@ -23,45 +23,41 @@ import {
 
 
 export function handleDealCreated(event: DealCreatedEvent): void {
-  let entity = new Deal(
-    event.params.dealId.toString()
-  )
+  let entity = new Deal(event.params.dealId.toString())
 
   // Load the user entity associated with the brand address
-  // let brandAddress = event.params.param1.brand.toString()
-  let brandAddress = "1"
+  let brandAddress = event.params.param1.brand.toHexString();
   let brandUser = User.load(brandAddress);
 
-  if (!brandUser) {
-    brandUser = new User(brandAddress)
+  if (brandUser == null) {
+    brandUser = new User(brandAddress);
     brandUser.save();
   }
 
   // Load the user entity associated with the influencer address
-  // let influencerAddress = event.params.param1.influencer.toString()
-  let influencerAddress = "2"
+  let influencerAddress = event.params.param1.influencer.toHexString();
   let influencerUser = User.load(influencerAddress);
 
-  if (!influencerUser) {
-    influencerUser = new User(influencerAddress)
+  if (influencerUser == null) {
+    influencerUser = new User(influencerAddress);
     influencerUser.save();
   }
 
-  entity.brand = brandAddress
-  entity.influencer = influencerAddress
-  // entity.brandDeposit = event.params.param1.brandDeposit
-  // entity.status = event.params.param1.status
-  // entity.timeToPost = event.params.param2.timeToPost
-  // entity.timeToVerify = event.params.param2.timeToVerify
-  // entity.timeToPerform = event.params.param2.timeToPerform
-  // entity.postDeadline = event.params.param2.postDeadline
-  // entity.verifyDeadline = event.params.param2.verifyDeadline
-  // entity.performDeadline = event.params.param2.performDeadline
-  // entity.postURL = event.params.param3.postURL
-  // entity.impressionsTarget = event.params.param3.impressionsTarget
-  // entity.expectedContentHash = event.params.param3.expectedContentHash
+  entity.brand = brandAddress;
+  entity.influencer = influencerAddress;
+  entity.brandDeposit = event.params.param1.brandDeposit;
+  entity.status = event.params.param1.status;
+  entity.timeToPost = event.params.param2.timeToPost;
+  entity.timeToVerify = event.params.param2.timeToVerify;
+  entity.timeToPerform = event.params.param2.timeToPerform;
+  entity.postDeadline = event.params.param2.postDeadline;
+  entity.verifyDeadline = event.params.param2.verifyDeadline;
+  entity.performDeadline = event.params.param2.performDeadline;
+  entity.postURL = event.params.param3.postURL;
+  entity.impressionsTarget = event.params.param3.impressionsTarget;
+  entity.expectedContentHash = event.params.param3.expectedContentHash;
 
-  entity.save()
+  entity.save();
 }
 
 export function handleDealSigned(event: DealSignedEvent): void {

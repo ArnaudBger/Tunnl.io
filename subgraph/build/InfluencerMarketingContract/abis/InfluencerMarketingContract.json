@@ -150,7 +150,7 @@
         ],
         "indexed": false,
         "internalType": "struct InfluencerMarketingContract.DealBasics",
-        "name": "",
+        "name": "param1",
         "type": "tuple"
       },
       {
@@ -188,7 +188,7 @@
         ],
         "indexed": false,
         "internalType": "struct InfluencerMarketingContract.DealDeadlines",
-        "name": "",
+        "name": "param2",
         "type": "tuple"
       },
       {
@@ -226,7 +226,7 @@
         ],
         "indexed": false,
         "internalType": "struct InfluencerMarketingContract.DealDetails",
-        "name": "",
+        "name": "param3",
         "type": "tuple"
       }
     ],

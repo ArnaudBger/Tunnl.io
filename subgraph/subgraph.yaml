@@ -39,7 +39,7 @@ dataSources:
           handler: handleContentPosted
         - event: DealCompleted(indexed uint256,uint256,uint256,uint256)
           handler: handleDealCompleted
-        - event: DealCreated(indexed uint256,(ad(rv dress,address,uint256,uint8),(uint256,uint256,uint256,uint256,uint256,uint256),(string,uint256,bool,bool,bool,bytes32))
+        - event: DealCreated(indexed uint256,(address,address,uint256,uint8),(uint256,uint256,uint256,uint256,uint256,uint256),(string,uint256,bool,bool,bool,bytes32))
           handler: handleDealCreated
         - event: DealSigned(indexed uint256)
           handler: handleDealSigned
