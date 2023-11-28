@@ -1,0 +1,8 @@
+sources:
+    - name: hahaLabs
+      handler:
+          graphql:
+              endpoint: https://api.studio.thegraph.com/query/59587/haha_subgraph/v0.0.10
+
+documents:
+    - ./queries/test.graphql

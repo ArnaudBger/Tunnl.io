@@ -3,6 +3,7 @@ import { StackNavigationProp } from "@react-navigation/stack"
 export type RootStackParamList = {
     GetStartedPage: undefined
     Login: undefined
+    Home: undefined
 }
 
 type GetStartedPageNavigationProp = StackNavigationProp<

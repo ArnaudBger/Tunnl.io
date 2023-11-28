@@ -1,53 +1,13 @@
 import React, { useState } from "react"
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native"
-import { useNavigation } from '@react-navigation/native';
+import DisplayDeals from "./Contracts"
+import { MobileNav } from '../Footer/NavBar/Navbar';
 
-export default function LoginPage() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const navigation = useNavigation();
-    
+export default function Home() {
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>HAHA</Text>
-            <Text style={styles.subtitle}>
-                Smart agreements that pay automatically when reached
-            </Text>
-
-            <TextInput
-                style={styles.input}
-                onChangeText={setEmail}
-                value={email}
-                placeholder="Email Address"
-                keyboardType="email-address"
-            />
-
-            <TextInput
-                style={styles.input}
-                onChangeText={setPassword}
-                value={password}
-                placeholder="Password"
-                secureTextEntry
-            />
-
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Sign in</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.termsText}>
-                By continuing, you have read and agree to our Terms and Conditions and Privacy
-                Statement.
-            </Text>
-
-            <TouchableOpacity
-                onPress={() => navigation.navigate("Home")}
-            >
-                <Text style={styles.linkText}>Forgot password?</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.buttonOutline}>
-                <Text style={styles.buttonOutlineText}>Create an account</Text>
-            </TouchableOpacity>
+            <MobileNav />
         </View>
     )
 }

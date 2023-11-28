@@ -1,0 +1,38 @@
+.mobile-nav {
+  align-items: flex-start;
+  background-color: var(--collection-1-cool-gray-cool-gray-50);
+  border-color: var(--collection-1-cool-gray-cool-gray-100);
+  border-top-style: solid;
+  border-top-width: 1px;
+  display: flex;
+  padding: 0px 0px 16px;
+  position: relative;
+  width: 390px;
+}
+
+.mobile-nav .mobile-nav-link-instance {
+  flex: 1 !important;
+  flex-grow: 1 !important;
+  width: unset !important;
+}
+
+.mobile-nav .icon-instance-node {
+  height: 24px !important;
+  position: relative !important;
+  width: 24px !important;
+}
+
+.mobile-nav .mobile-nav-link-2 {
+  margin-left: -2px !important;
+  margin-right: -2px !important;
+}
+
+.mobile-nav .mobile-nav-link-3 {
+  margin-left: -5.5px !important;
+  margin-right: -5.5px !important;
+}
+
+.mobile-nav .mobile-nav-link-4 {
+  margin-left: -14.5px !important;
+  margin-right: -14.5px !important;
+}
