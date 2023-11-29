@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { House } from "../../../../icons/House/House";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native"
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native"
 
 export const MobileNavLink = ({
   icon = <House state="active"/>,
@@ -12,43 +12,44 @@ export const MobileNavLink = ({
 
   return (
     <View style={styles.mobileNavLink}>
-      {icon}
-      <Text style={textStyle}>{text}</Text>
+        {icon}
+        <Text style={textStyle}>{text}</Text>
     </View>
   );
 };
+
 
 MobileNavLink.propTypes = {
   property1: PropTypes.oneOf(["active", "default"]),
   text: PropTypes.string,
 };
 
+const screenWidth = Dimensions.get('window').width;
+const navLinkCount = 5; // Update this based on the number of nav links you have
+const navLinkSize = screenWidth / navLinkCount; // Dynamically calculate the width
 
 const styles = StyleSheet.create({
   mobileNavLink: {
     alignItems: "center",
-    justifyContent: "center", // Align items horizontally in the center
+    justifyContent: "center",
     flexDirection: "column",
-    padding: 12,
-  },
-  
-  house1: {
-    height: 24, // Assuming the unit is pixels
-    width: 24, // Assuming the unit is pixels
+    width: navLinkSize, // Fixed width for each nav link
+    padding: 10,
   },
 
   property1Default: {
-    color: "#D3D3D3", // Replace with the appropriate color value
-    fontFamily: "", // Make sure this font is loaded in your project
-    fontSize: 12,
-    fontWeight: "400", // normal
-    letterSpacing: 0, // Adjust as needed
+    color: "#D3D3D3",
+    fontFamily: "", // Specify your font family
+    fontSize: 10,
+    fontWeight: "400",
+    textAlign: "center", // Center the text
   },
   property1Active: {
-    color: "#333333", // Replace with the appropriate color value
-    fontFamily: "", // Make sure this font is loaded in your project
-    fontSize: 12,
-    fontWeight: "700", // semibold
-    letterSpacing: -0.5, // Adjust as needed
-    },
+    color: "#333333",
+    fontFamily: "", // Specify your font family
+    fontSize: 10,
+    fontWeight: "400",
+    textAlign: "center", // Center the text
+
+  },
 });

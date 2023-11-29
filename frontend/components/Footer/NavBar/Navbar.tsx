@@ -41,12 +41,13 @@ const styles = StyleSheet.create({
       bottom: 0, // Anchoring it to the bottom
       left: 0, // Aligning to the left
       right: 0, // Aligning to the right to stretch across the screen
-      alignItems: "center",
-      justifyContent: "center", // Align items horizontally in the center
       flexDirection:"row",
+
+      alignItems: "center", // Align child elements vertically in the center
       backgroundColor: '#FFFFFF',
       borderTopColor: '#000000',
       borderTopWidth: 1,
       width:screenWidth,
+      justifyContent: "space-evenly", // Evenly distribute child elements across the horizontal axis 
     },
   });

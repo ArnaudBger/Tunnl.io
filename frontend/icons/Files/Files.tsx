@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native"
+import { View} from "react-native"
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
@@ -8,7 +8,7 @@ export const Files = ({state}) => {
   const renderIcon= () => {
     switch (state) {
         case 'active':
-            return <Icon name="file-tray-full-sharp" size={30} />;
+            return <Icon name="file-tray-full-sharp" size={30}  />;
         default:
             return <Icon name="file-tray-full-outline" size={30} />; // Default case
     }
