@@ -1,5 +1,5 @@
 import { useQuery, gql} from '@apollo/client'
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native"
+import { View, Text, StyleSheet, Dimensions} from "react-native"
 
 
 const deals_query = gql`
@@ -40,13 +40,15 @@ export default function Contracts() {
 }
 
 
+const screenWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   container: {
       flex: 1,
       padding: 20,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "#fff",
+      width: screenWidth, 
   },
   title: {
       fontSize: 32,
