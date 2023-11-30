@@ -12,4 +12,5 @@ type GetStartedPageNavigationProp = StackNavigationProp<RootStackParamList, "Get
 export type GetStartedPageProps = {
     navigation: GetStartedPageNavigationProp
     setState?: Dispatch<SetStateAction<"LoginPage" | "RegisterPage" | "VerifyPage">>
+    checklogin?: () => void
 }

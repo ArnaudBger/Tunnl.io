@@ -145,7 +145,7 @@ class CompleteEmailRegistrationView(APIView):
             'is_active': True,
             'session_id': session_id,
         }
-
+        print(data)
         serializer = UserCreateSerializer(data=data)
 
         if serializer.is_valid():

@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react"
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native"
 import { APIENDPOINT } from "@env"
 
-export default function RegisterPage({ navigation, setState }: GetStartedPageProps) {
+export default function RegisterPage({ navigation, setState, checklogin }: GetStartedPageProps) {
     const [userName, setUserName] = useState("")
     const [checking, setChecking] = useState<boolean>(false)
     const [available, setAvailable] = useState<boolean | null>(null)
     const [registerStage, setRegisterStage] = useState<"name" | "email" | "verify">("name")
     const [email, setEmail] = useState<string>("")
+    const [code, setCode] = useState<string>("")
     const checkName = async (name: string) => {
         if (APIENDPOINT) {
             try {
@@ -37,28 +38,58 @@ export default function RegisterPage({ navigation, setState }: GetStartedPagePro
     const sendEmail = async () => {
         if (APIENDPOINT) {
             try {
-                const response = await fetch(`${APIENDPOINT}register/sendemailverification/`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ email })
-                })
+                const response = await fetch(
+                    `${APIENDPOINT}users/register/sendemailverification/`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ email: email })
+                    }
+                )
 
                 if (!response.ok) {
-                    setAvailable(false)
+                    alert("Your email is registered or server error")
                     throw new Error(`Error `)
                 }
-                setAvailable(true)
+                setRegisterStage("verify")
             } catch (error) {
             } finally {
-                setChecking(false)
             }
         } else {
             console.log("API endpoint is not defined")
         }
     }
 
+    const completeRegistration = async () => {
+        alert(JSON.stringify({ name: userName, email, code }))
+        if (APIENDPOINT) {
+            try {
+                const response = await fetch(
+                    `${APIENDPOINT}users/register/completeemailregistration/`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ name: userName, email, code })
+                    }
+                )
+
+                if (!response.ok) {
+                    alert("Your verification code is invalid")
+                    throw new Error(`Error `)
+                }
+                if (checklogin) checklogin()
+                alert("registered successful!")
+            } catch (error) {
+            } finally {
+            }
+        } else {
+            console.log("API endpoint is not defined")
+        }
+    }
     useEffect(() => {
         if (userName === "") return
 
@@ -127,19 +158,23 @@ export default function RegisterPage({ navigation, setState }: GetStartedPagePro
                     <Text style={styles.subtitle}>enter your email</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={setUserName}
-                        value={userName}
+                        onChangeText={setEmail}
+                        value={email}
                         placeholder="email"
                         keyboardType="email-address"
                     />
 
-                    {available ? (
-                        <Text style={styles.infoGreen}></Text>
-                    ) : (
-                        <Text style={styles.infoRed}>Please enter a correct email</Text>
-                    )}
-
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity
+                        disabled={!email}
+                        style={styles.button}
+                        onPress={() => {
+                            if (email.includes("@")) {
+                                sendEmail()
+                            } else {
+                                alert("check email")
+                            }
+                        }}
+                    >
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -154,23 +189,23 @@ export default function RegisterPage({ navigation, setState }: GetStartedPagePro
             )}
             {registerStage === "verify" && (
                 <View style={styles.container}>
-                    <Text style={styles.title}>What is your email</Text>
-                    <Text style={styles.subtitle}>enter your email</Text>
+                    <Text style={styles.title}>Check your email</Text>
+                    <Text style={styles.subtitle}>your verification code</Text>
                     <TextInput
                         style={styles.input}
-                        onChangeText={setUserName}
-                        value={userName}
-                        placeholder="email"
-                        keyboardType="email-address"
+                        onChangeText={setCode}
+                        value={code}
+                        placeholder="verification code"
+                        keyboardType="default"
                     />
 
-                    {available ? (
-                        <Text style={styles.infoGreen}></Text>
-                    ) : (
-                        <Text style={styles.infoRed}>Please enter a correct email</Text>
-                    )}
-
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => {
+                            alert(code)
+                            completeRegistration()
+                        }}
+                    >
                         <Text style={styles.buttonText}>Continue</Text>
                     </TouchableOpacity>
                     <TouchableOpacity

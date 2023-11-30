@@ -4,17 +4,25 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-nativ
 import LoginUserPage from "./Login/LoginPage"
 import RegisterPage from "./Login/RegisterPage"
 
-export default function LoginPage({ navigation }: GetStartedPageProps) {
+export default function LoginPage({ checklogin, navigation }: GetStartedPageProps) {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [stage, setState] = useState<"LoginPage" | "RegisterPage" | "VerifyPage">("LoginPage")
     return (
         <>
             {stage === "LoginPage" && (
-                <LoginUserPage navigation={navigation} setState={setState} />
+                <LoginUserPage
+                    navigation={navigation}
+                    setState={setState}
+                    checklogin={checklogin}
+                />
             )}
             {stage === "RegisterPage" && (
-                <RegisterPage navigation={navigation} setState={setState} />
+                <RegisterPage
+                    navigation={navigation}
+                    setState={setState}
+                    checklogin={checklogin}
+                />
             )}
         </>
     )
