@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Deal",
-    "slug": "deal",
+    "slug": "hahalabsapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.astrog.deal"
     },
     "web": {
       "favicon": "./assets/favicon.png"

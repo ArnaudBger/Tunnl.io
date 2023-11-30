@@ -1,0 +1,144 @@
+import { useQuery, gql} from '@apollo/client'
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity} from "react-native"
+import { AntDesign } from '@expo/vector-icons'; 
+
+
+export default function Overview() {
+    return (
+        <View style={styles.container}>
+            <View style={styles.upperPart}>
+                <Text style={styles.upperPartTitle}>
+                My Overview
+                </Text>
+            </View>
+            <View style={styles.cardsContainer}>
+                <View style={styles.bigCard}>
+                    <View style={styles.upperPartBigCard}>
+                        <Text style={styles.upperPartCardTitle}>Values Of Campaigns</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.value}>Values</Text>
+                    </View>
+                </View>
+                <View style={styles.bigCard}>
+                    <View style={styles.upperPartBigCard}>
+                        <Text style={styles.upperPartCardTitle}>Values Of Campaigns</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.value}>Values</Text>
+                    </View>
+                </View>
+                <View style={styles.littleCardsContainer}>
+                <View style={styles.littleCard1}>
+                    <View >
+                        <Text style={styles.upperPartCardTitle}>Change in followers</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.value}>Values</Text>
+                    </View>
+                </View>
+                <View style={styles.littleCard2}>
+
+                    <View>
+                        <Text style={styles.upperPartCardTitle}>Change</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.value}>Values</Text>
+                        
+                    </View>
+                </View>
+            </View>
+            <TouchableOpacity style={styles.footerPart}>
+                <Text style={styles.footerText}> Show more</Text>
+                <AntDesign name="arrowright" size={16} color="black" />
+            </TouchableOpacity>
+            </View>
+        </View>
+
+    );
+}
+
+
+const screenWidth = Dimensions.get('window').width;
+
+const styles = StyleSheet.create({
+  container: {
+      flex: 1,
+      padding: 20,
+      justifyContent: "center",
+      width: screenWidth, 
+      flexDirection:"column",
+
+  },
+
+  upperPart:{
+    flexDirection: 'row', // Arrange children of profileGroup horizontally
+    alignItems: 'center', // Center children vertically
+    marginBottom: 30
+  },
+
+
+  upperPartTitle:{
+    fontFamily: 'System',
+    fontSize: 20,
+    fontWeight: "500",
+  },
+
+  cardsContainer:{
+    flexDirection:"column",
+  },
+
+  bigCard: {
+    flex: 1,
+    backgroundColor:"#00FFFF",
+    padding:10,
+    borderRadius: 7, // Adjust this value for desired roundness
+    marginBottom: 7,
+  },
+
+
+  upperPartBigCard:{
+    flexDirection: 'row', // Arrange children of profileGroup horizontally
+    alignItems: 'center', // Center children vertically
+  },
+
+  upperPartCardTitle: {
+    color: "#7F828B"
+    },
+
+    value: {
+        fontSize: 20,
+    },
+
+  littleCard1: {
+        flex: 1,
+        backgroundColor:"#00FFFF",
+        padding:10,
+        borderRadius: 7, // Adjust this value for desired roundness
+  },
+
+  littleCard2: {
+    flex: 1,
+    backgroundColor:"#00FFFF",
+    padding:10,
+    marginLeft:7,
+    borderRadius: 7, // Adjust this value for desired roundness
+},
+
+  littleCardsContainer: {
+    flexDirection:"row",
+    justifyContent: "space-between", // This distributes space evenly
+  },
+
+  footerPart:{
+    flexDirection:"row",
+    alignItems:"center",
+    marginTop: 20,
+    marginLeft: 280
+  },
+
+  footerText: {
+    marginRight: 5,
+    fontWeight:500
+  }
+})

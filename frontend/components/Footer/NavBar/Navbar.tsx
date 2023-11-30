@@ -42,11 +42,11 @@ const styles = StyleSheet.create({
       left: 0, // Aligning to the left
       right: 0, // Aligning to the right to stretch across the screen
       flexDirection:"row",
+      paddingBottom: 20,
 
       alignItems: "center", // Align child elements vertically in the center
       backgroundColor: '#FFFFFF',
       borderTopColor: '#000000',
-      borderTopWidth: 1,
       width:screenWidth,
       justifyContent: "space-evenly", // Evenly distribute child elements across the horizontal axis 
     },

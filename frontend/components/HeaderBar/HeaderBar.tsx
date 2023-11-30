@@ -1,64 +1,60 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import Avatar from '../Avatar/Avatar'; // Assuming Avatar is also a React Native component
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const HeaderBar = () => {
   return (
     <View style={styles.headerBar}>
-      <View style={styles.headerContent}>
         <View style={styles.profileGroup}>
-          <Avatar badge={false} name="TA" name1={true} size="sm" src="" src1={false} />
+          <Avatar badge={false} src = "image-1"/>
           <Text style={styles.textWrapper}>Brooklyn Simmons</Text>
         </View>
-        <View style={styles.settingsLink} />
-      </View>
+        <View style={styles.settingsLink}>
+          <Icon name="settings-outline" size={24}/>
+        </View>
     </View>
   );
 };
 
 const screenWidth = Dimensions.get('window').width;
-
 const styles = StyleSheet.create({
   headerBar: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#ffffff', // Replaced 'background-color'
-    borderBottomWidth: 1, // Replaced 'border-bottom-width' (React Native doesn't support border styles)
-    borderColor: '#cccccc', // Replaced 'var(--collection-1-cool-gray-cool-gray-400)', use actual color value
-    height: 104, // Removed 'px'
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderColor: '#cccccc',
+    height: 104,
     width: screenWidth,
+    flexDirection: 'row', // Arrange children horizontally
+    alignItems: 'center', // Center children vertically
+    justifyContent: 'space-between', // Space between profileGroup and settingsLink
+    paddingTop: 50,
   },
-  headerContent: {
-    alignItems: 'center',
-    flex: 1,
-    position: 'relative',
-    left: 24, // Removed 'px'
-    top: 64, // Removed 'px'
-    width: 342, // Removed 'px'
-  },
+
   profileGroup: {
-    alignItems: 'center',
-    flex: 1,
-    flexGrow: 1,
-    // 'gap' is not supported in React Native, consider using margin or padding
+    flexDirection: 'row', // Arrange children of profileGroup horizontally
+    alignItems: 'center', // Center children vertically
+    marginLeft: 20, // Add some margin to the left
+    // Remove flex: 1 and flexGrow: 1 to allow natural sizing
   },
+
   textWrapper: {
     color: '#000000',
-    flex: 1,
-    fontFamily: 'System', // Replaced 'var(--14px-source-sans-regular-font-family)', use actual font name
-    fontSize: 14, // Replaced 'var(--14px-source-sans-regular-font-size)', removed 'px'
-    // 'fontStyle', 'fontWeight', 'letterSpacing', 'lineHeight' should be specified directly, if known
+    fontFamily: 'System',
+    fontSize: 14,
   },
+
   settingsLink: {
-    // 'backgroundImage' is not supported, use <Image> component instead
-    width: 24, // Removed 'px'
-    height: 24, // Removed 'px'
-    // Consider adding styles for an Image component to replace the background image
+    marginRight: 10, // Add some margin to the right
+    alignItems: 'center', // Center the icon vertically
   },
-  // Add other styles as needed
+  // ... other styles ...
 });
+
 
 
 export default HeaderBar;

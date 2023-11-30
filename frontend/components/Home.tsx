@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet } from "react-native"
 import Contracts from "./categories/Contracts"
 import { MobileNav } from './Footer/NavBar/Navbar';
 import HeaderBar from "./HeaderBar/HeaderBar";
+import Base from "./categories/Base";
 
 export default function Home() {
     const [activeCategory, setActiveCategory] = useState('Home');
@@ -11,7 +12,7 @@ export default function Home() {
     const renderCategoryComponent = () => {
         switch (activeCategory) {
             case 'Home':
-                return ;
+                return <Base />;
             case 'Discover':
                 return ;
             case 'Contracts':
