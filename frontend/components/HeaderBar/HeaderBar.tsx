@@ -1,5 +1,5 @@
 import React from "react"
-import { View, Text, StyleSheet, Dimensions } from "react-native"
+import { View, Text, StyleSheet, Dimensions, TextInput } from "react-native"
 import Avatar from "../Avatar/Avatar" // Assuming Avatar is also a React Native component
 import Icon from "react-native-vector-icons/Ionicons"
 import { TouchableOpacity } from "react-native"
@@ -9,9 +9,10 @@ interface HeaderBarProps {
     wallet: string
     userEmail: string
     checklogin: () => void
+    activeCategory: string
 }
 
-const HeaderBar: React.FC<HeaderBarProps> = ({ checklogin, userName, wallet, userEmail }) => {
+const HeaderBar: React.FC<HeaderBarProps> = ({ checklogin, userName, wallet, userEmail, activeCategory }) => {
     const logout = async () => {
         if (APIENDPOINT) {
             try {
@@ -37,19 +38,38 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ checklogin, userName, wallet, use
     }
 
     return (
-        <View style={styles.headerBar}>
-            <View style={styles.profileGroup}>
+        <View style={styles.headerBar}>{activeCategory === "Discover" ? (
+              <View style={styles.discoverContainer}>
                 <Avatar badge={false} src="image-1" />
-                <Text style={styles.textWrapper}>{userName}</Text>
-            </View>
-            <TouchableOpacity
+                <View style={styles.searchContainer}>
+                <Icon name="search-outline" size={20} style={styles.searchIcon} />
+                <TextInput
+                    placeholder="Search"
+                    style={styles.searchInput}
+                    />
+                </View>
+              </View>
+            ) : activeCategory === "Notifications" ? (
+              <View style={styles.notificationsContainer}>
+                  <Text style={styles.notificationsTitle}>Notifications</Text>
+              </View>
+          ) : (
+                <View style={styles.baseContainer}>
+                <View style={styles.profileGroup}>
+                    <Avatar badge={false} src="image-1" />
+                    <Text style={styles.textWrapper}>{userName}</Text>
+                </View>
+                <TouchableOpacity
                 style={styles.settingsLink}
                 onPress={() => {
                     logout()
                 }}
-            >
+                >
                 <Icon name="log-out-outline" size={24} />
-            </TouchableOpacity>
+                </TouchableOpacity>
+                </View>
+            )}
+            
         </View>
     )
 }
@@ -68,16 +88,51 @@ const styles = StyleSheet.create({
         width: screenWidth,
         flexDirection: "row", // Arrange children horizontally
         alignItems: "center", // Center children vertically
-        justifyContent: "space-between", // Space between profileGroup and settingsLink
+        justifyContent: "center",
         paddingTop: 50
+    },
+
+    baseContainer: {
+      flexDirection: "row",
+      justifyContent: "space-between", // Space between profileGroup and settingsLink
+      alignItems: "center",
+      width: "100%",
+      paddingHorizontal: 25, // Add some margin to the left
+    },
+
+    notificationsContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+
+    notificationsTitle: {
+      fontSize: 20,
+      fontFamily: "System",
+      fontWeight: "600", // Semi-bold font weight
     },
 
     profileGroup: {
         flexDirection: "row", // Arrange children of profileGroup horizontally
         alignItems: "center", // Center children vertically
-        marginLeft: 20 // Add some margin to the left
         // Remove flex: 1 and flexGrow: 1 to allow natural sizing
     },
+
+    searchContainer: {
+      flexDirection: "row", // Arrange children of profileGroup horizontally
+      alignItems: "center", // Center children vertically
+      borderWidth: 1,
+      padding:8,
+      borderRadius: 8,
+      borderColor: "#cccccc",
+      width:300,
+  },
+
+  discoverContainer: {
+    flexDirection: "row", // Arrange children of profileGroup horizontally
+    alignItems: "center", // Center children vertically
+    width: "100%",
+    paddingHorizontal: 25,
+  },
 
     textWrapper: {
         color: "#000000",
@@ -85,11 +140,15 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
 
+    searchInput: {
+      marginLeft: 8,
+    },
+
     settingsLink: {
-        marginRight: 10, // Add some margin to the right
-        alignItems: "center" // Center the icon vertically
-    }
-    // ... other styles ...
+    },
+    
+    searchIcon: {
+  },
 })
 
 export default HeaderBar

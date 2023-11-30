@@ -7,6 +7,7 @@ export const MobileNavLink = ({
   icon = <House state="active"/>,
   state,
   text = "Home",
+  hasNotifications=true,
 }) => {
   const textStyle = state === "active" ? styles.property1Active : styles.property1Default;
 

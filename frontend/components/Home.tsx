@@ -1,9 +1,11 @@
 import React, { useState } from "react"
 import { View, ScrollView, StyleSheet } from "react-native"
-import Contracts from "./categories/Contracts"
+import Contracts from "./Categories/Contracts"
 import { MobileNav } from "./Footer/NavBar/Navbar"
 import HeaderBar from "./HeaderBar/HeaderBar"
-import Base from "./categories/Base"
+import Base from "./Categories/Base"
+import Discover from "./Categories/Discover"
+import Notifications from "./Categories/Notifications"
 
 interface HomeProps {
     userName: string
@@ -21,11 +23,11 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin }) 
             case "Home":
                 return <Base userName={userName} wallet={wallet} userEmail={userEmail} />
             case "Discover":
-                return
+                return <Discover />
             case "Contracts":
                 return <Contracts />
             case "Notifications":
-                return
+                return <Notifications />
             case "Chat":
                 return
             default:
@@ -39,7 +41,7 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin }) 
                 userName={userName}
                 wallet={wallet}
                 userEmail={userEmail}
-            />
+                activeCategory={activeCategory}/>
             <ScrollView style={styles.scrollableView}>{renderCategoryComponent()}</ScrollView>
             <MobileNav activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
         </View>

@@ -9,6 +9,8 @@ import LoginPage from "./components/Login"
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client"
 import Home from "./components/Home"
 import { APIENDPOINT } from "@env"
+import { Web3Provider } from './utils/Web3Context'; 
+
 const APIURL = "https://api.studio.thegraph.com/query/59587/haha_subgraph/v0.0.10"
 
 const client = new ApolloClient({
@@ -59,6 +61,7 @@ export default function App() {
     }, [])
 
     return (
+    <Web3Provider>
         <ApolloProvider client={client}>
             <NavigationContainer>
                 <Stack.Navigator
@@ -90,6 +93,7 @@ export default function App() {
                 <StatusBar style="auto" />
             </NavigationContainer>
         </ApolloProvider>
+        </Web3Provider>
     )
 }
 

@@ -8,13 +8,23 @@ import { House } from "../../../icons/House/House";
 import { MobileNavLink } from "./NavBarLink/MobileNavLink";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native"
 
-export const MobileNav = ({ activeCategory, setActiveCategory }) => {
+export const MobileNav = ({ activeCategory, setActiveCategory}) => {
 
-const renderNavLink = (IconComponent, text) => {
+const renderNavLink = (IconComponent, text, notifications = false) => {
+    const [hasNotifications, setHasNotifications] = useState(true);
+
+    const handleNavLinkClick = (text) => {
+      setActiveCategory(text);
+      if (text === 'Notifications') {
+        setHasNotifications(false); // Hide the notification dot
+      }
+    };
     return (
-      <TouchableOpacity onPress={() => setActiveCategory(text)}>
+      <TouchableOpacity onPress={() => handleNavLinkClick(text)}>
         <MobileNavLink
-          icon={<IconComponent state={activeCategory === text ? 'active' : 'default'} />}
+          icon={<IconComponent state={activeCategory === text ? 'active' : 'default'} 
+          hasNotifications={text === 'Notifications' ? hasNotifications : false}
+          />}
           state={activeCategory === text ? 'active' : 'default'}
           text={text}
         />
@@ -27,7 +37,7 @@ const renderNavLink = (IconComponent, text) => {
       {renderNavLink(House, 'Home')}
       {renderNavLink(Compass, 'Discover')}
       {renderNavLink(Files, 'Contracts')}
-      {renderNavLink(Bell, 'Notifications')}
+      {renderNavLink(Bell, 'Notifications', true)}
       {renderNavLink(Chats, 'Chat')}
     </View>
   );
