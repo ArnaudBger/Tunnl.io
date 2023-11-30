@@ -115,8 +115,10 @@ class CheckNameIsAvailable(APIView):
     def post(self, request):
         name = request.data.get('name')
 
-        if len(name) > 20:
-            return Response({"error": "username is exceeded 20 charactors"}, status=status.HTTP_400_BAD_REQUEST)
+        if len(name) > 16:
+            return Response({"error": "username is exceeded 15 charactors"}, status=status.HTTP_400_BAD_REQUEST)
+        if len(name) < 3:
+            return Response({"error": "username is less then 3 charactors"}, status=status.HTTP_400_BAD_REQUEST)
         if ' ' in name:
             return Response({"error": "username conatins space"}, status=status.HTTP_400_BAD_REQUEST)
 

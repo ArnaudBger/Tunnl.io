@@ -1,4 +1,5 @@
 import { StackNavigationProp } from "@react-navigation/stack"
+import { Dispatch, SetStateAction, RefObject, MutableRefObject, SyntheticEvent } from "react"
 
 export type RootStackParamList = {
     GetStartedPage: undefined
@@ -6,12 +7,9 @@ export type RootStackParamList = {
     Home: undefined
 }
 
-type GetStartedPageNavigationProp = StackNavigationProp<
-    RootStackParamList,
-    "GetStartedPage",
-    "Login"
->
+type GetStartedPageNavigationProp = StackNavigationProp<RootStackParamList, "GetStartedPage">
 
 export type GetStartedPageProps = {
     navigation: GetStartedPageNavigationProp
+    setState?: Dispatch<SetStateAction<"LoginPage" | "RegisterPage" | "VerifyPage">>
 }

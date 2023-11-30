@@ -1,22 +1,48 @@
 import { GetStartedPageProps } from "@/utils/StackNavigation"
 import React, { useState } from "react"
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native"
-import LoginUserPage from "./Login/LoginPage"
-import RegisterPage from "./Login/RegisterPage"
 
-export default function LoginPage({ navigation }: GetStartedPageProps) {
+export default function LoginUserPage({ navigation, setState }: GetStartedPageProps) {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-    const [stage, setState] = useState<"LoginPage" | "RegisterPage" | "VerifyPage">("LoginPage")
+
     return (
-        <>
-            {stage === "LoginPage" && (
-                <LoginUserPage navigation={navigation} setState={setState} />
-            )}
-            {stage === "RegisterPage" && (
-                <RegisterPage navigation={navigation} setState={setState} />
-            )}
-        </>
+        <View style={styles.container}>
+            <Text style={styles.title}>HAHA</Text>
+            <Text style={styles.subtitle}>
+                Smart agreements that pay automatically when reached
+            </Text>
+
+            <TextInput
+                style={styles.input}
+                onChangeText={setEmail}
+                value={email}
+                placeholder="Email Address"
+                keyboardType="email-address"
+            />
+
+            <TouchableOpacity style={styles.button}>
+                <Text style={styles.buttonText}>Sign in</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.termsText}>
+                By continuing, you have read and agree to our Terms and Conditions and Privacy
+                Statement.
+            </Text>
+
+            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+                <Text style={styles.linkText}>Forgot password?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.buttonOutline}
+                onPress={() => {
+                    if (setState) setState("RegisterPage")
+                }}
+            >
+                <Text style={styles.buttonOutlineText}>Create an account</Text>
+            </TouchableOpacity>
+        </View>
     )
 }
 
