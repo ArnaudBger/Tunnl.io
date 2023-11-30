@@ -6,11 +6,13 @@ import { APIENDPOINT } from "@env"
 export default function RegisterPage({ navigation, setState }: GetStartedPageProps) {
     const [userName, setUserName] = useState("")
     const [checking, setChecking] = useState<boolean>(false)
-    const [available, setAvailable] = useState<boolean>(false)
+    const [available, setAvailable] = useState<boolean | null>(null)
+    const [registerStage, setRegisterStage] = useState<"name" | "email" | "verify">("name")
+    const [email, setEmail] = useState<string>("")
     const checkName = async (name: string) => {
         if (APIENDPOINT) {
             try {
-                const response = await fetch(`http://localhost:8000/users/checkname/`, {
+                const response = await fetch(`${APIENDPOINT}users/checkname/`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -19,9 +21,34 @@ export default function RegisterPage({ navigation, setState }: GetStartedPagePro
                 })
 
                 if (!response.ok) {
+                    setAvailable(false)
                     throw new Error(`Error `)
                 }
+                setAvailable(true)
+            } catch (error) {
+            } finally {
+                setChecking(false)
+            }
+        } else {
+            console.log("API endpoint is not defined")
+        }
+    }
 
+    const sendEmail = async () => {
+        if (APIENDPOINT) {
+            try {
+                const response = await fetch(`${APIENDPOINT}register/sendemailverification/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email })
+                })
+
+                if (!response.ok) {
+                    setAvailable(false)
+                    throw new Error(`Error `)
+                }
                 setAvailable(true)
             } catch (error) {
             } finally {
@@ -33,7 +60,6 @@ export default function RegisterPage({ navigation, setState }: GetStartedPagePro
     }
 
     useEffect(() => {
-        alert(userName)
         if (userName === "") return
 
         setChecking(true)
@@ -45,36 +71,119 @@ export default function RegisterPage({ navigation, setState }: GetStartedPagePro
     }, [userName])
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Get your username</Text>
-            <Text style={styles.subtitle}>Create a username</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setUserName}
-                value={userName}
-                placeholder="ie. Charolette_98"
-                keyboardType="default"
-            />
+        <>
+            {registerStage === "name" && (
+                <View style={styles.container}>
+                    <Text style={styles.title}>Get your username</Text>
+                    <Text style={styles.subtitle}>Create a username</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setUserName}
+                        value={userName}
+                        placeholder="ie. Charolette_98"
+                        keyboardType="default"
+                    />
 
-            <Text style={styles.termsText}>
-                * The Username must be 3 to 16 characters and can consist of letters, numbers,
-                hyphens (-) and underscores (_).
-            </Text>
-            <Text style={styles.termsText}>* The first character must be a letter.</Text>
-            <Text style={styles.termsText}>* Letters are not case-sensitive.</Text>
+                    {available === true && (
+                        <Text style={styles.infoGreen}>congrats! your name is available</Text>
+                    )}
+                    {available === false && (
+                        <Text style={styles.infoRed}>
+                            sorry! your username is taken or not meeting the requirements
+                        </Text>
+                    )}
 
-            <TouchableOpacity disabled={!available || checking} style={styles.button}>
-                <Text style={styles.buttonText}>{checking ? "Checking..." : "Continue"}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.buttonOutline}
-                onPress={() => {
-                    if (setState) setState("LoginPage")
-                }}
-            >
-                <Text style={styles.buttonOutlineText}>Back</Text>
-            </TouchableOpacity>
-        </View>
+                    <Text style={styles.termsText}>
+                        • The Username must be 3 to 16 characters and can consist of letters,
+                        numbers, hyphens (-) and underscores (_).
+                    </Text>
+                    <Text style={styles.termsText}>• The first character must be a letter.</Text>
+                    <Text style={styles.termsText}>• Letters are not case-sensitive.</Text>
+
+                    <TouchableOpacity
+                        disabled={!available || checking}
+                        style={styles.button}
+                        onPress={() => {
+                            setRegisterStage("email")
+                        }}
+                    >
+                        <Text style={styles.buttonText}>
+                            {checking ? "Checking..." : "Continue ->"}
+                        </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonOutline}
+                        onPress={() => {
+                            if (setState) setState("LoginPage")
+                        }}
+                    >
+                        <Text style={styles.buttonOutlineText}> {"<-Back"}</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            {registerStage === "email" && (
+                <View style={styles.container}>
+                    <Text style={styles.title}>What is your email</Text>
+                    <Text style={styles.subtitle}>enter your email</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setUserName}
+                        value={userName}
+                        placeholder="email"
+                        keyboardType="email-address"
+                    />
+
+                    {available ? (
+                        <Text style={styles.infoGreen}></Text>
+                    ) : (
+                        <Text style={styles.infoRed}>Please enter a correct email</Text>
+                    )}
+
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Continue</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonOutline}
+                        onPress={() => {
+                            if (setState) setState("LoginPage")
+                        }}
+                    >
+                        <Text style={styles.buttonOutlineText}> {"<-Back"}</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            {registerStage === "verify" && (
+                <View style={styles.container}>
+                    <Text style={styles.title}>What is your email</Text>
+                    <Text style={styles.subtitle}>enter your email</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setUserName}
+                        value={userName}
+                        placeholder="email"
+                        keyboardType="email-address"
+                    />
+
+                    {available ? (
+                        <Text style={styles.infoGreen}></Text>
+                    ) : (
+                        <Text style={styles.infoRed}>Please enter a correct email</Text>
+                    )}
+
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Continue</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonOutline}
+                        onPress={() => {
+                            if (setState) setState("LoginPage")
+                        }}
+                    >
+                        <Text style={styles.buttonOutlineText}> {"<-Back"}</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        </>
     )
 }
 
@@ -82,14 +191,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center",
         backgroundColor: "#fff"
     },
     title: {
-        fontSize: 32,
+        width: "97%",
+        fontSize: 28,
         fontWeight: "bold",
+        textAlign: "left",
         color: "#000",
+        marginTop: 130,
         marginBottom: 10
     },
     subtitle: {
@@ -99,6 +211,24 @@ const styles = StyleSheet.create({
         fontWeight: "400",
         marginTop: 40,
         color: "#14161B"
+    },
+    infoGreen: {
+        marginTop: -10,
+        width: "97%",
+        fontSize: 12,
+        color: "green",
+        textAlign: "left",
+        fontWeight: "400",
+        marginBottom: 20
+    },
+    infoRed: {
+        marginTop: -10,
+        width: "97%",
+        fontSize: 12,
+        color: "red",
+        textAlign: "left",
+        fontWeight: "400",
+        marginBottom: 20
     },
     input: {
         height: 50,

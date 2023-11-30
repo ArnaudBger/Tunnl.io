@@ -1,5 +1,5 @@
 from django.urls import path
-from .views_general import LoginView,  UserView, LogoutView, CheckNameIsAvailable
+from .views_general import LoginView, LoginWithCodeView, UserView, LogoutView, CheckNameIsAvailable
 from .views_alter_signin import GoogleLoginRedirectApi, GoogleLoginApi
 from .views_signup import RegisterEmailView, RegisterResendEmailView, CheckEmailVerificationCodeView, CompleteEmailRegistrationView
 from .views_change import ChangePasswordView, UpdateEmailView, VerifyUpdateEmailView, UpdateProfilePicView, UpdateUserNameView
@@ -34,6 +34,7 @@ urlpatterns = [
          CompleteEmailResetPasswordView.as_view()),
 
     path('login/', LoginView.as_view()),
+    path('codelogin/', LoginWithCodeView.as_view()),
     path('user/', UserView.as_view()),
     path('logout/', LogoutView.as_view()),
     path('checkname/', CheckNameIsAvailable.as_view()),

@@ -10,12 +10,15 @@ import uuid
 from django.conf import settings
 from .encryption import encrypt
 from .authentication import JWTAuthentication
-from .models import User
+from .models import User,  EmailVerificationCode
 from django.middleware.csrf import get_token
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from datetime import datetime, timedelta
 import jwt
+from .sendverificationemail import send_verification_email as sve
+from random import randint
+from django.utils import timezone
 
 
 class LoginView(APIView):
@@ -24,11 +27,48 @@ class LoginView(APIView):
         return super(LoginView, self).dispatch(*args, **kwargs)
 
     def post(self, request):
-        identifier, password = request.data['identifier'], request.data['password']
-        user = User.objects.filter(email=identifier).first()
-        if not user or not user.check_password(password):
+        email = request.data['email']
+        user = User.objects.filter(email=email).first()
+        if user is not None:
+            EmailVerificationCode.objects.filter(
+                email=email, purpose='register').delete()
+
+            verification_code = randint(10000000, 99999999)
+            expires_at = timezone.now() + timedelta(minutes=10)
+            verification_code_instance = EmailVerificationCode(
+                email=email,
+                code=verification_code,
+                purpose='login',
+                expires_at=expires_at
+            )
+            verification_code_instance.save()
+            try:
+                sve(to_email=email,
+                    verification_code=verification_code)
+                return Response({'message': 'Email verification code sent'})
+            except Exception as e:
+                return Response({'error': 'server error'}, status=400)
+        else:
+            return Response({'message': 'need register'}, status=400)
+
+
+class LoginWithCodeView(APIView):
+    @method_decorator(ratelimit(key='ip', rate='10/m', method='POST', block=True))
+    def dispatch(self, *args, **kwargs):
+        return super(LoginWithCodeView, self).dispatch(*args, **kwargs)
+
+    def post(self, request):
+        email = request.data['email']
+        code = request.data['code']
+        user = User.objects.filter(email=email).first()
+
+        verification_code_instance = EmailVerificationCode.objects.filter(
+            email=email, code=code, purpose='login'
+        ).first()
+
+        if verification_code_instance is None or timezone.now() > verification_code_instance.expires_at:
             raise AuthenticationFailed(
-                'User not found!' if not user else 'Incorrect password!')
+                'Incorrect or expired verification code!')
 
         token = self.generate_token(user)
 
@@ -40,7 +80,7 @@ class LoginView(APIView):
     def generate_token(self, user):
         session_id = str(uuid.uuid4())
         payload = {
-            'id': user.id,
+            'id': str(user.id),
             'exp': datetime.utcnow() + timedelta(minutes=20160),
             'iat': datetime.utcnow(),
             'session_id': session_id
@@ -61,22 +101,19 @@ class LoginView(APIView):
 
 
 class UserView(APIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        return Response({"success": "success"})
-        # user = request.user
-        # response_data = {}
-        # response_data.update({
-        #     "id": user.id,
-        #     "name": user.name,
-        #     "email": user.email,
-        #     "phone": str(user.phone),
-        #     "signed_successful": user.signed_successful,
-        #     "birthday": True,
-        # })
-        # return Response(response_data)
+        user = request.user
+        response_data = {}
+        response_data.update({
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "wallet": user.wallet_address,
+        })
+        return Response(response_data)
 
 
 class LogoutView(APIView):

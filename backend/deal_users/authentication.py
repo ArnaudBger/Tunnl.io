@@ -44,20 +44,3 @@ class JWTAuthentication(BaseJWTAuthentication):
             raise AuthenticationFailed('User not found!')
 
         return user, key
-
-
-class IsRegistered(BaseJWTAuthentication):
-
-    def authenticate(self, request):
-        payload, key = self.authenticate_key(request)
-
-        if payload.get('type', 'regular') == 'guest':
-            raise AuthenticationFailed(
-                'Guest user can not perform this action!')
-
-        user = User.objects.filter(id=payload['id']).first()
-
-        if not user:
-            raise AuthenticationFailed('User not found!')
-
-        return user, key

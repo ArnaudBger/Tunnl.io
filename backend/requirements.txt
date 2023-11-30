@@ -76,3 +76,5 @@ geoip2==4.7.0
 redis==4.5.5
 django-redis==5.2.0
 google-auth==2.23.3
+eth-account
+web3

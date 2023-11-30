@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import unicodedata
+import uuid
 
 
 class CustomUserManager(BaseUserManager):
@@ -12,9 +13,6 @@ class CustomUserManager(BaseUserManager):
         if email:
             email = self.normalize_email(email)
             extra_fields['email'] = email
-
-        if phone:
-            extra_fields['phone'] = phone
 
         user = self.model(**extra_fields)
         user.set_password(password)
@@ -46,7 +44,7 @@ class LowerCharField(CaseInsensitiveFieldMixin, models.CharField):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.UUIDField(primary_key=True, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)
     name_lower = LowerCharField(
         max_length=255, unique=True, editable=False, null=True, blank=True)
@@ -55,12 +53,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     image_url = models.URLField(blank=True, null=True)
     email = models.EmailField(
         max_length=255, null=True, unique=True, blank=True)
-    wallet_address = models.CharField(max_length=255)
-    pri_key = models.CharField(max_length=255)
-    password = models.CharField(max_length=255)
+    wallet_address = models.CharField(max_length=1024)
+    pri_key = models.CharField(max_length=1024)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    signed_successful = models.BooleanField(default=False)
     session_id = models.CharField(max_length=36, blank=True, null=True)
 
     objects = CustomUserManager()
@@ -75,8 +71,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         if self.email:
             return self.email
-        elif self.phone:
-            return str(self.phone)
         else:
             return str(self.id)
 

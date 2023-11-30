@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from .models import User,  EmailVerificationCode
 from django.conf import settings
-from .encryption import encrypt
+from .encryption import encrypt, encrypt_private_key
 from datetime import timedelta
 from random import randint
 from django.utils import timezone
@@ -19,6 +19,8 @@ from .serializers import UserCreateSerializer
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 from django.middleware.csrf import get_token
+from .createWallet import create_wallet
+from .transferFunds import transferFundForRegisteredUser
 
 
 class RegisterEmailView(APIView):
@@ -29,7 +31,6 @@ class RegisterEmailView(APIView):
     def post(self, request):
 
         email = request.data['email']
-        lang = request.data['language']
         existing_user = User.objects.filter(email=email).first()
         if existing_user:
             return Response({'message': 'User with this email already exists'}, status=400)
@@ -47,10 +48,12 @@ class RegisterEmailView(APIView):
         )
         verification_code_instance.save()
         try:
-            sve(toemail=email,
-                verificationcode=verification_code, language=lang)
+            sve(to_email=email,
+                verification_code=verification_code)
             return Response({'message': 'Email verification code sent'})
-        except:
+        except Exception as e:
+            print(e)
+            print(1)
             return Response({'error': 'server error'})
 
 
@@ -61,7 +64,6 @@ class RegisterResendEmailView(APIView):
 
     def post(self, request):
         email = request.data['email']
-        lang = request.data['language']
         existing_user = User.objects.filter(email=email).first()
 
         if existing_user:
@@ -78,7 +80,7 @@ class RegisterResendEmailView(APIView):
 
         try:
             sve(toemail=email,
-                verificationcode=verification_code_instance.code, language=lang)
+                verificationcode=verification_code_instance.code)
             return Response({'message': 'Email verification code sent'})
         except:
             return Response({'error': 'server error'})
@@ -107,7 +109,7 @@ class CheckEmailVerificationCodeView(APIView):
 
 
 class CompleteEmailRegistrationView(APIView):
-    @method_decorator(ratelimit(key='ip', rate='2/m', method='POST', block=True))
+    @method_decorator(ratelimit(key='ip', rate='10/m', method='POST', block=True))
     def dispatch(self, *args, **kwargs):
         return super(CompleteEmailRegistrationView, self).dispatch(*args, **kwargs)
 
@@ -115,13 +117,6 @@ class CompleteEmailRegistrationView(APIView):
         email = request.data['email']
         code = request.data['code']
         name = request.data['name']
-        password = request.data['password']
-        birthdayMonth = request.data.get('birthdayMonth')
-        birthdayYear = request.data.get("birthdayYear")
-        referral = request.data.get("referral")
-        utm_source = request.data.get('utm_source')
-        utm_medium = request.data.get('utm_medium')
-        utm_campaign = request.data.get('utm_campaign')
 
         if len(name) > 20 or len(name) == 0:
             return Response({"error": "username is exceeded 20 charactors"}, status=status.HTTP_400_BAD_REQUEST)
@@ -136,47 +131,35 @@ class CompleteEmailRegistrationView(APIView):
             email=email, code=code, purpose='register'
         ).first()
 
-        if len(password) < 8:
-            return Response({'message': 'password length is invalid'}, status=400)
-
         if verification_code_instance is None or timezone.now() > verification_code_instance.expires_at:
             raise AuthenticationFailed(
                 'Incorrect or expired verification code!')
 
         session_id = str(uuid.uuid4())
-
+        wallet_address, privaty_key = create_wallet()
         data = {
             'email': email,
             'name': name,
-            'password': password,
-            'birthdayMonth': birthdayMonth,
-            'birthdayYear': birthdayYear,
+            'wallet_address': wallet_address,
+            'pri_key': encrypt_private_key(privaty_key),
             'is_active': True,
-            'session_id': session_id
+            'session_id': session_id,
         }
+
         serializer = UserCreateSerializer(data=data)
 
         if serializer.is_valid():
             user = serializer.save()
-            user.signed_successful = True
             user.save()
         else:
             return Response("Registration Failed", status=400)
 
+        transaction_hash = transferFundForRegisteredUser(wallet_address)
         verification_code_instance.delete()
-        swe(email, name)
-
-        # create a controller for user if user doesn't have one
-
-        if referral:
-            user.ref_by_code = referral
-            user.save()
-
-        update_login_user_stats.delay(
-            userid=user.id, ip=ip, utm_campaign=utm_campaign, utm_medium=utm_medium, utm_source=utm_source, created=True)
+        swe(email, name, wallet_address, transaction_hash)
 
         payload = {
-            'id': user.id,
+            'id': str(user.id),
             'exp': datetime.utcnow() + timedelta(minutes=20160),
             'iat': datetime.utcnow(),
             'session_id': session_id
