@@ -50,7 +50,7 @@ export default function RegisterPage({ navigation, setState, checklogin }: GetSt
                 )
 
                 if (!response.ok) {
-                    alert("Your email is registered or server error")
+                    alert("Your email is registered")
                     throw new Error(`Error `)
                 }
                 setRegisterStage("verify")
@@ -63,7 +63,6 @@ export default function RegisterPage({ navigation, setState, checklogin }: GetSt
     }
 
     const completeRegistration = async () => {
-        alert(JSON.stringify({ name: userName, email, code }))
         if (APIENDPOINT) {
             try {
                 const response = await fetch(
@@ -202,7 +201,6 @@ export default function RegisterPage({ navigation, setState, checklogin }: GetSt
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => {
-                            alert(code)
                             completeRegistration()
                         }}
                     >

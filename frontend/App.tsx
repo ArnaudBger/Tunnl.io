@@ -33,8 +33,10 @@ export default function App() {
                     },
                     credentials: "include"
                 })
-
                 if (!response.ok) {
+                    setUserName("")
+                    setWallet("")
+                    setUserEmail("")
                     throw new Error(`Error `)
                 }
                 const res = await response.json()
@@ -43,10 +45,12 @@ export default function App() {
                 setWallet(res.wallet)
                 setUserEmail(res.email)
             } catch (error) {
+                setUserName("")
+                setWallet("")
+                setUserEmail("")
             } finally {
             }
         } else {
-            console.log("API endpoint is not defined")
         }
     }
 
@@ -77,6 +81,7 @@ export default function App() {
                                     userName={userName}
                                     wallet={wallet}
                                     userEmail={userEmail}
+                                    checklogin={checklogin}
                                 />
                             )}
                         </Stack.Screen>

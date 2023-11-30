@@ -6,8 +6,7 @@ import RegisterPage from "./Login/RegisterPage"
 
 export default function LoginPage({ checklogin, navigation }: GetStartedPageProps) {
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [stage, setState] = useState<"LoginPage" | "RegisterPage" | "VerifyPage">("LoginPage")
+    const [stage, setState] = useState<"LoginPage" | "RegisterPage">("LoginPage")
     return (
         <>
             {stage === "LoginPage" && (

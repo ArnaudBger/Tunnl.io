@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
 
   footerText: {
     marginRight: 5,
-    fontWeight: 600
+    fontWeight: "600"
   }
 
 })

@@ -1,48 +1,135 @@
 import { GetStartedPageProps } from "@/utils/StackNavigation"
 import React, { useState } from "react"
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native"
-
-export default function LoginUserPage({ navigation, setState }: GetStartedPageProps) {
+import { APIENDPOINT } from "@env"
+export default function LoginUserPage({ navigation, setState, checklogin }: GetStartedPageProps) {
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [code, setCode] = useState("")
+    const [loginStage, setLoginStage] = useState<"email" | "verify">("email")
 
+    const emailLogin = async () => {
+        if (APIENDPOINT) {
+            try {
+                const response = await fetch(`${APIENDPOINT}users/login/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email: email })
+                })
+
+                if (!response.ok) {
+                    alert("Please create your account")
+                    throw new Error(`Error`)
+                }
+
+                setLoginStage("verify")
+            } catch (error) {
+            } finally {
+            }
+        } else {
+            console.log("API endpoint is not defined")
+        }
+    }
+
+    const completeLogin = async () => {
+        if (APIENDPOINT) {
+            try {
+                const response = await fetch(`${APIENDPOINT}users/codelogin/`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ email, code })
+                })
+
+                if (!response.ok) {
+                    alert("Your verification code is invalid")
+                    throw new Error(`Error `)
+                }
+                if (checklogin) checklogin()
+                alert("login successful!")
+            } catch (error) {
+            } finally {
+            }
+        } else {
+            console.log("API endpoint is not defined")
+        }
+    }
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>HAHA</Text>
-            <Text style={styles.subtitle}>
-                Smart agreements that pay automatically when reached
-            </Text>
+        <>
+            {loginStage === "email" && (
+                <View style={styles.container}>
+                    <Text style={styles.title}>HAHA</Text>
+                    <Text style={styles.subtitle}>
+                        Smart agreements that pay automatically when reached
+                    </Text>
 
-            <TextInput
-                style={styles.input}
-                onChangeText={setEmail}
-                value={email}
-                placeholder="Email Address"
-                keyboardType="email-address"
-            />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setEmail}
+                        value={email}
+                        placeholder="Email Address"
+                        keyboardType="email-address"
+                    />
 
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Sign in</Text>
-            </TouchableOpacity>
+                    <TouchableOpacity
+                        disabled={!email}
+                        style={styles.button}
+                        onPress={() => {
+                            emailLogin()
+                        }}
+                    >
+                        <Text style={styles.buttonText}>Sign in</Text>
+                    </TouchableOpacity>
 
-            <Text style={styles.termsText}>
-                By continuing, you have read and agree to our Terms and Conditions and Privacy
-                Statement.
-            </Text>
+                    <Text style={styles.termsText}>
+                        By continuing, you have read and agree to our Terms and Conditions and
+                        Privacy Statement.
+                    </Text>
 
-            <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-                <Text style={styles.linkText}>Forgot password?</Text>
-            </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonOutline}
+                        onPress={() => {
+                            if (setState) setState("RegisterPage")
+                        }}
+                    >
+                        <Text style={styles.buttonOutlineText}>Create an account</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+            {loginStage === "verify" && (
+                <View style={styles.container}>
+                    <Text style={styles.title}>Check your email</Text>
+                    <Text style={styles.subtitle}>your verification code</Text>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setCode}
+                        value={code}
+                        placeholder="verification code"
+                        keyboardType="default"
+                    />
 
-            <TouchableOpacity
-                style={styles.buttonOutline}
-                onPress={() => {
-                    if (setState) setState("RegisterPage")
-                }}
-            >
-                <Text style={styles.buttonOutlineText}>Create an account</Text>
-            </TouchableOpacity>
-        </View>
+                    <TouchableOpacity
+                        disabled={!code}
+                        style={styles.button}
+                        onPress={() => {
+                            completeLogin()
+                        }}
+                    >
+                        <Text style={styles.buttonText}>Continue</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.buttonOutline}
+                        onPress={() => {
+                            if (setState) setState("LoginPage")
+                        }}
+                    >
+                        <Text style={styles.buttonOutlineText}>Back</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        </>
     )
 }
 
@@ -89,7 +176,7 @@ const styles = StyleSheet.create({
         fontSize: 18
     },
     termsText: {
-        fontSize: 14,
+        fontSize: 10,
         color: "#888",
         textAlign: "left",
         marginTop: 20

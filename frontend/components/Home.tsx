@@ -9,16 +9,17 @@ interface HomeProps {
     userName: string
     wallet: string
     userEmail: string
+    checklogin: () => void
 }
 
-const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail }) => {
+const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin }) => {
     const [activeCategory, setActiveCategory] = useState("Home")
 
     // Function to determine which component to render
     const renderCategoryComponent = () => {
         switch (activeCategory) {
             case "Home":
-                return <Base />
+                return <Base userName={userName} wallet={wallet} userEmail={userEmail} />
             case "Discover":
                 return
             case "Contracts":
@@ -33,7 +34,12 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail }) => {
     }
     return (
         <View style={styles.container}>
-            <HeaderBar />
+            <HeaderBar
+                checklogin={checklogin}
+                userName={userName}
+                wallet={wallet}
+                userEmail={userEmail}
+            />
             <ScrollView style={styles.scrollableView}>{renderCategoryComponent()}</ScrollView>
             <MobileNav activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
         </View>
