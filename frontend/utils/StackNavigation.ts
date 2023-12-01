@@ -5,6 +5,7 @@ export type RootStackParamList = {
     GetStartedPage: undefined
     Login: undefined
     Home: undefined
+    ChatScreen: { chatId: number }; // Assuming ChatScreen expects a chatId parameter
 }
 
 type GetStartedPageNavigationProp = StackNavigationProp<RootStackParamList, "GetStartedPage">

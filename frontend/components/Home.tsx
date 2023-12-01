@@ -6,16 +6,19 @@ import HeaderBar from "./HeaderBar/HeaderBar"
 import Base from "./Categories/Base"
 import Discover from "./Categories/Discover"
 import Notifications from "./Categories/Notifications"
+import Chats from "./Categories/Chats"
 
 interface HomeProps {
     userName: string
     wallet: string
     userEmail: string
     checklogin: () => void
+    navigation:any
 }
 
-const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin }) => {
+const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin}) => {
     const [activeCategory, setActiveCategory] = useState("Home")
+    const [demoStage, setDemoStage] = useState("0")
 
     // Function to determine which component to render
     const renderCategoryComponent = () => {
@@ -27,11 +30,9 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin }) 
             case "Contracts":
                 return <Contracts />
             case "Notifications":
-                return <Notifications />
+                return <Notifications demoStage={demoStage} setDemoStage={setDemoStage}/>;
             case "Chat":
-                return
-            default:
-                return // Default case
+                return <Chats demoStage={demoStage} setDemoStage={setDemoStage}/>
         }
     }
     return (
@@ -55,7 +56,8 @@ const styles = StyleSheet.create({
     },
     scrollableView: {
         flex: 1,
-        marginTop: 104 // Adjust this value based on the height of your HeaderBar
+        marginTop: 104, // Adjust this value based on the height of your HeaderBar
+        backgroundColor: "#F2F3F6"
     }
 })
 

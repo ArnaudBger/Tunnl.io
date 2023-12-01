@@ -6,53 +6,44 @@ import {contractAddress, contractABI} from '../../../utils/contractInfo'
 import React, { useState } from 'react';
 
 export default function NotificationCard({
-    type = "mintStableCoin",
-    iconName ="logo-bitcoin",
-    brand = "",
-    time = "",
-    userPrivateKey="ecbbf75c6176b50e33cb6b86206958c183ae5754d4b6ee16ac566631a09609ab"
+    type = "startDemo",
+    brand = "Macdonald's",
+    dealId= "1",
+    time = "Now",
+    onPress,
+}) 
+
+{
+
+let text = () =>{
+    switch (type) {
+        case "startDemo":
+            return "Ready to embark on an exciting journey? Click here to start the demo now!";
+        case "sign":
+            return `Opportunity knocks! Sign your marketing campaign deal with ${brand} and set things in motion.`;
+        case "post":
+            return `Great job on sealing the deal! Now, it's showtime. You have 3 days to create and post your amazing content. Let's make it count!`;
+        case "waitVerification":
+            return `Your content is out there for the world to see! Sit back and relax while ${brand} reviews and verifies your submission.`;
+        case "verification":
+            return `Your content has passed the verification stage! Hold tight, the performance evaluation is underway. Payment is just around the corner.`;
+        case "endDemo":
+            return `Demo complete. Thank you!`;
+        default:
+            return "Welcome! Ready to explore? Choose an option to get started.";
+    }
 }
-) {
-
-const [isLoading, setIsLoading] = useState(false);
-
 
 const provider = useWeb3();
-
-  const handleNotificationClick = async () => {
-    setIsLoading(true);
-    if (type === "mintStableCoin" && provider) {
-      try {
-        // Create a wallet instance using the private key and provider
-        const wallet = new ethers.Wallet(userPrivateKey, provider);
-
-        // Create a contract instance
-        const contract = new ethers.Contract(contractAddress, contractABI, wallet);
-
-        const tx = await contract.mintToken();
-        const receipt = await tx.wait();
-
-        setIsLoading(false);
-        alert(`Minting successful! Transaction Hash: ${receipt.transactionHash}`);
-
-      } catch (error) {
-        console.error('Minting failed:', error);
-        alert('Minting failed. Please try again.');
-      }
-    }
-  };
-
     return (
         <View style={styles.container}>
-             <TouchableOpacity style={styles.container} onPress={() => handleNotificationClick(type)}>
+             <TouchableOpacity style={styles.container} onPress={onPress}>
             <View style={styles.iconCircle}>
-            <Icon name={iconName} size={30} />
             </View>
             <View style={styles.notificationContentContainer}>
-            <Text style={styles.notificationTitle}>You can mint your test stable coin by cliking here!</Text>
+            <Text style={styles.notificationTitle}>{text()}</Text>
             <Text style={styles.notificationSubTitle}>{time}</Text>
             </View>
-            {isLoading && <ActivityIndicator size="large" color="#0000ff" />}
             </TouchableOpacity>
         </View>
     );
@@ -66,7 +57,6 @@ const styles = StyleSheet.create({
       justifyContent: "space-between",
       flexDirection:"row",
       marginTop: 20,
-      alignItems: "center",
   },
 
   iconCircle: {
@@ -86,7 +76,8 @@ const styles = StyleSheet.create({
   },
 
   notificationSubTitle: {
-    fontWeight: "600"
+    fontWeight: "400",
+    marginTop: 10,
   },
 
   notificationContentContainer: {

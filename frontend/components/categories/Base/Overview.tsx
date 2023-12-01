@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
 
     bigCard: {
         flex: 1,
-        backgroundColor: "#00FFFF",
+        backgroundColor: "#E8EAF1",
         padding: 10,
         borderRadius: 7, // Adjust this value for desired roundness
         marginBottom: 7
@@ -107,14 +107,14 @@ const styles = StyleSheet.create({
 
     littleCard1: {
         flex: 1,
-        backgroundColor: "#00FFFF",
+        backgroundColor: "#E8EAF1",
         padding: 10,
         borderRadius: 7 // Adjust this value for desired roundness
     },
 
     littleCard2: {
         flex: 1,
-        backgroundColor: "#00FFFF",
+        backgroundColor: "#E8EAF1",
         padding: 10,
         marginLeft: 7,
         borderRadius: 7 // Adjust this value for desired roundness

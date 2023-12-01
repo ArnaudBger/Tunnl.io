@@ -69,7 +69,6 @@ const HeaderBar: React.FC<HeaderBarProps> = ({ checklogin, userName, wallet, use
                 </TouchableOpacity>
                 </View>
             )}
-            
         </View>
     )
 }
