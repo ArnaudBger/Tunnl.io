@@ -19,7 +19,7 @@ import jwt
 from .sendverificationemail import send_verification_email as sve
 from random import randint
 from django.utils import timezone
-from encryption import decrypt_private_key
+from .encryption import decrypt_private_key
 
 
 class LoginView(APIView):
