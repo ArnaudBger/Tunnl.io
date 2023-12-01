@@ -19,6 +19,7 @@ import jwt
 from .sendverificationemail import send_verification_email as sve
 from random import randint
 from django.utils import timezone
+from encryption import decrypt_private_key
 
 
 class LoginView(APIView):
@@ -107,11 +108,13 @@ class UserView(APIView):
     def get(self, request):
         user = request.user
         response_data = {}
+
         response_data.update({
             "id": user.id,
             "name": user.name,
             "email": user.email,
             "wallet": user.wallet_address,
+            "priKey": decrypt_private_key(user.pri_key)
         })
         return Response(response_data)
 
