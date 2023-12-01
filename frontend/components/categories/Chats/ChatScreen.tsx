@@ -123,7 +123,7 @@ const ChatScreen = ({ route }) => {
                     (message.stage <= demoStage) && (
                         <View key={index} style={[styles.messageContainer, message.sender === 'user' ? styles.userMessage : styles.otherMessage]}>
                             <Text style={styles.messageText}>{message.text}</Text>
-                            {message.image && <Image source={message.image} style={styles.messageImage} />}
+                            {message.image && <Image source={message.image} style={styles.messageImage} onError={(e) => console.log(e.nativeEvent.error)}/>}
                             {message.deal && (
                                 <View style={styles.dealContainer}>
                                     <Text style={styles.dealDescription}>{message.deal.description}</Text>
@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginVertical: 5,
         maxWidth: '70%',
+        alignItems: "center",
     },
     userMessage: {
         backgroundColor: '#ADD8E6', // Light blue
@@ -222,10 +223,9 @@ const styles = StyleSheet.create({
     },
 
     messageImage: {
-        width: '100%',
-        height: 200,
-        resizeMode: 'contain',
         marginTop: 10,
+        width: 220,
+        height: 200
     },
 
     dealContainer: {
