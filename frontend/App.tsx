@@ -11,6 +11,7 @@ import Home from "./components/Home"
 import { APIENDPOINT } from "@env"
 import { Web3Provider } from './utils/Web3Context'; 
 import ChatScreen from "./components/Categories/Chats/ChatScreen"
+import DetailsContract from "./components/Categories/Contracts/DetailsContract"
 
 const APIURL = "https://api.studio.thegraph.com/query/59587/haha_subgraph/v0.0.10"
 
@@ -91,6 +92,8 @@ export default function App() {
                         </Stack.Screen>
                     )}
                     <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                    <Stack.Screen name="DetailsContract" component={DetailsContract} />
+
                 </Stack.Navigator>
                 <StatusBar style="auto" />
             </NavigationContainer>

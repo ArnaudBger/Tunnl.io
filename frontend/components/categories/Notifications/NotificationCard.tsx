@@ -4,6 +4,11 @@ import { ethers } from 'ethers';
 import { useWeb3 } from '../../../utils/Web3Context'; // Adjust the path as needed
 import {contractAddress, contractABI} from '../../../utils/contractInfo'
 import React, { useState } from 'react';
+import { Demo } from "../../../icons/Demo/Demo";
+import { Signature } from "../../../icons/Signature/Signature";
+import { Post } from "../../../icons/Post/Post";
+import { PendingVerification } from "../../../icons/PendingVerification/PendingVerification";
+import { Verification } from "../../../icons/Verification/Verification";
 
 export default function NotificationCard({
     type = "startDemo",
@@ -14,6 +19,23 @@ export default function NotificationCard({
 }) 
 
 {
+
+let icon = () => {
+    switch (type) {
+        case "startDemo":
+            return <Demo />
+        case "endDemo":
+            return <Demo />
+        case "sign":
+            return <Signature />
+        case "post":
+            return <Post />
+        case "waitVerification":
+            return <PendingVerification />
+        case "verification":
+            return <Verification />
+    }
+    };
 
 let text = () =>{
     switch (type) {
@@ -38,8 +60,7 @@ const provider = useWeb3();
     return (
         <View style={styles.container}>
              <TouchableOpacity style={styles.container} onPress={onPress}>
-            <View style={styles.iconCircle}>
-            </View>
+            {icon()}
             <View style={styles.notificationContentContainer}>
             <Text style={styles.notificationTitle}>{text()}</Text>
             <Text style={styles.notificationSubTitle}>{time}</Text>
