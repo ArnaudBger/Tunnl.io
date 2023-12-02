@@ -12,11 +12,12 @@ interface HomeProps {
     userName: string
     wallet: string
     userEmail: string
+    pk: string
     checklogin: () => void
-    navigation:any
+    navigation: any
 }
 
-const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin}) => {
+const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin, pk }) => {
     const [activeCategory, setActiveCategory] = useState("Home")
     const [demoStage, setDemoStage] = useState("0")
 
@@ -30,9 +31,9 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin}) =
             case "Contracts":
                 return <Contracts />
             case "Notifications":
-                return <Notifications demoStage={demoStage} setDemoStage={setDemoStage}/>;
+                return <Notifications demoStage={demoStage} setDemoStage={setDemoStage} />
             case "Chat":
-                return <Chats demoStage={demoStage} setDemoStage={setDemoStage}/>
+                return <Chats demoStage={demoStage} setDemoStage={setDemoStage} />
         }
     }
     return (
@@ -42,7 +43,8 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin}) =
                 userName={userName}
                 wallet={wallet}
                 userEmail={userEmail}
-                activeCategory={activeCategory}/>
+                activeCategory={activeCategory}
+            />
             <ScrollView style={styles.scrollableView}>{renderCategoryComponent()}</ScrollView>
             <MobileNav activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
         </View>
