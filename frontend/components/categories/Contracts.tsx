@@ -1,20 +1,12 @@
-import { useQuery, gql } from '@apollo/client';
+import React, { useContext } from 'react';
+import { DealsContext } from '../../utils/DealsContext';
+import { calculateDealStage} from '../../queries/getUserDeals';
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 
-const deals_query = gql`
-  query Getdeals {
-    deals {
-      id
-      brandDeposit
-      status
-    }
-  }
-`;
-
 export default function Contracts() {
     const navigation = useNavigation();
-    const { loading, error, data } = useQuery(deals_query);
+    const { deals, loading, error} = useContext(DealsContext);
 
     if (loading) return (
       <View style={styles.centered}>
@@ -24,9 +16,12 @@ export default function Contracts() {
     if (error) return <Text>Error : {error.message}</Text>;
 
     // Categorize deals
-    const activeDeals = data.deals.filter(deal => deal.status == '1');
-    const doneDeals = data.deals.filter(deal => deal.status == '2');
-    const failedDeals = data.deals.filter(deal => deal.status == '0');
+    const activeDeals = deals.filter(deal => deal.status == '1');
+    const activeDealsLength = Object.keys(activeDeals).length;
+    const doneDeals = deals.filter(deal => deal.status == '2');
+    const doneDealsLength =  Object.keys(doneDeals).length;
+    const failedDeals = deals.filter(deal => deal.status == '0');
+    const failedDealsLength =  Object.keys(failedDeals).length;
 
     const navigateToDetails = (deal) => {
       navigation.navigate('DetailsContract', { deal });
@@ -34,26 +29,30 @@ export default function Contracts() {
 
     const renderDeals = (deals, title) => (
       <View>
-        <Text style={styles.title}>{title}</Text>
-        {deals.map((deal) => (
-          <TouchableOpacity 
-            key={deal.id} 
-            style={styles.dealContainer}
-            onPress={() => navigateToDetails(deal)}
-          >
-            <Text>Deal ID: {deal.id}</Text>
-            <Text>Brand Deposit: {deal.brandDeposit}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <Text style={styles.title}>{title}</Text>
+      {deals.map((deal) => (
+        <TouchableOpacity 
+          key={deal.id} 
+          style={styles.dealContainer}
+          onPress={() => navigateToDetails(deal)}
+        >
+          <View style={styles.stageIndicator}>
+            <Text style={styles.stageText}>STAGE: {calculateDealStage(deal)}</Text>
+          </View>
+          <Text>Deal ID: {deal.id}</Text>
+          <Text>Brand Deposit: {deal.brandDeposit}</Text>
+        </TouchableOpacity>
+      ))}
+    </View>
     );
 
     return (
         <View style={styles.container}>
           <Text style={styles.mainTitle}>Smart Agreements</Text>
-          {renderDeals(activeDeals, "Active Deals")}
-          {renderDeals(doneDeals, "Completed Deals")}
-          {renderDeals(failedDeals, "Failed Deals")}
+          {renderDeals(activeDeals, `(${activeDealsLength}) IN PROGRESS`)}
+          {renderDeals(doneDeals, `(${doneDealsLength}) COMPLETED`)}
+          {renderDeals(failedDeals, `(${failedDealsLength}) FAILED`)}
+          <Text style={styles.poweredBy}>Powered by The Graph</Text>
         </View>
     );
 }
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: '300',
     marginTop: 10,
   },
   dealContainer: {
@@ -98,5 +97,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 300
+  },
+  poweredBy: {
+    marginTop: 20,
+    fontSize: 12,
+    color: 'gray',
+    textAlign: 'center',
+  },
+
+  stageIndicator: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    padding: 5,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  stageText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#333', // Change as needed
   },
 });

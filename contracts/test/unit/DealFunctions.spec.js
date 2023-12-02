@@ -289,10 +289,10 @@ describe("Brand-Influencer deal functions tests", function () {
         });
 
         it("should revert when influencer hasn't sign the deal", async function () {
-          // const tx_3 = await contract.connect(influencer).postContent(dealID, "https://influencer.com", {gasLimit, gasPrice});
-          // await tx_3.wait();
+          const tx_3 = await contract.connect(influencer).postContent(dealID, "https://influencer.com", {gasLimit, gasPrice});
+          await tx_3.wait();
 
-          // expect(tx_3).to.be.revertedWith("Only influencer can post content");
+          expect(tx_3).to.be.revertedWith("Only influencer can post content");
         });
     });
 

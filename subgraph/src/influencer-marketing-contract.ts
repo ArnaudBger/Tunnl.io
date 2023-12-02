@@ -79,7 +79,8 @@ export function handleDealSigned(event: DealSignedEvent): void {
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-
+  deal.postDeadline = event.block.timestamp.plus(deal.timeToPost)
+  deal.save()
   entity.save()
 }
 
@@ -108,7 +109,7 @@ export function handleContentPosted(event: ContentPostedEvent): void {
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-
+  deal.verifyDeadline = event.block.timestamp.plus(deal.timeToVerify)
   entity.save()
   deal.save()
 }
@@ -132,7 +133,8 @@ export function handleContentAccepted(event: ContentAcceptedEvent): void {
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-
+  deal.performDeadline = event.block.timestamp.plus(deal.timeToPerform)
+  deal.save()
   entity.save()
 }
 
@@ -155,7 +157,8 @@ export function handleContentDisputed(event: ContentDisputedEvent): void {
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-
+  deal.performDeadline = event.block.timestamp.plus(deal.timeToPerform)
+  deal.save()
   entity.save()
 }
 
@@ -242,6 +245,7 @@ export function handleDisputedContentVerified(
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
-
+  deal.performDeadline = event.block.timestamp.plus(deal.timeToPerform)
+  deal.save()
   entity.save()
 }

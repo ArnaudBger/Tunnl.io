@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@graphprotocol/client-cli": "^3.0.0",
     "all-contributors-cli": "^6.26.1",
     "husky": "^8.0.0"
   },
