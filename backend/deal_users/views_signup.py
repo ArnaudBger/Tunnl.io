@@ -149,8 +149,11 @@ class CompleteEmailRegistrationView(APIView):
         serializer = UserCreateSerializer(data=data)
 
         if serializer.is_valid():
-            user = serializer.save()
-            user.save()
+            try:
+                user = serializer.save()
+                user.save()
+            except Exception as e:
+                print(e)
         else:
             return Response("Registration Failed", status=400)
 
