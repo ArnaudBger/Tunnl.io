@@ -25,7 +25,7 @@ def send_welcome_email(to_email: str, name: str, wallet_address: str, transactio
             },
         ],
         "subject": "Thanks for registering your account - Haha Labs",
-        "htmlContent": f"<html><head></head><body><p>Hello,{name}</p><p>Thanks for registering your account at Haha Labs, we are excited to work with you for this journey!</p><p>We have automatically create your wallet address: {wallet_address} and have transfer some gas money to your wallet, you can check https://sepolia.etherscan.io/tx/{transaction_hash} </p><p>The Haha Labs Team</p></body></html>",
+        "htmlContent": f"<html><head></head><body><p>Hello,{name}</p><p>Thanks for registering your account at Haha Labs, we are excited to work with you for this journey!</p><p>We have automatically create your wallet address: {wallet_address} and have transfered some gas money to your wallet, you can check https://testnet.snowtrace.io/tx/{transaction_hash} </p><p>The Haha Labs Team</p></body></html>",
     }
 
     try:

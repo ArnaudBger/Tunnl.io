@@ -18,7 +18,7 @@ def transferFundForRegisteredUser(receiver_address: str):
     sender_address = os.environ.get("SENDER_ADDRESS")
     private_key = os.environ.get("FACET_PRIVATE_KEY")
 
-    amount = web3.toWei(0.05, 'ether')
+    amount = web3.toWei(0.02, 'ether')
     nonce = web3.eth.getTransactionCount(sender_address)
 
     tx = {
