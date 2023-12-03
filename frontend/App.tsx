@@ -13,6 +13,7 @@ import { Web3Provider } from "./utils/Web3Context"
 import ChatScreen from "./components/Categories/Chats/ChatScreen"
 import DetailsContract from "./components/Categories/Contracts/DetailsContract"
 import { DealsProvider } from "./utils/DealsContext"
+import { DemoStageProvider } from "./utils/DemoContext"
 
 const APIURL = "https://api.studio.thegraph.com/query/59587/haha_subgraph/v0.0.10"
 
@@ -69,39 +70,41 @@ export default function App() {
         <Web3Provider>
             <ApolloProvider client={client}>
                 <DealsProvider>
-                    <NavigationContainer>
-                        <Stack.Navigator
-                            screenOptions={{
-                                headerShown: false
-                            }}
-                        >
-                            {userName === "" ? (
-                                <>
-                                    <Stack.Screen name="GetStarted" component={GetStartedPage} />
-                                    <Stack.Screen name="Login">
-                                        {props => <LoginPage {...props} checklogin={checklogin} />}
+                    <DemoStageProvider>
+                        <NavigationContainer>
+                            <Stack.Navigator
+                                screenOptions={{
+                                    headerShown: false
+                                }}
+                            >
+                                {userName === "" ? (
+                                    <>
+                                        <Stack.Screen name="GetStarted" component={GetStartedPage} />
+                                        <Stack.Screen name="Login">
+                                            {props => <LoginPage {...props} checklogin={checklogin} />}
+                                        </Stack.Screen>
+                                    </>
+                                ) : (
+                                    <Stack.Screen name="Home">
+                                        {props => (
+                                            <Home
+                                                {...props}
+                                                userName={userName}
+                                                wallet={wallet}
+                                                userEmail={userEmail}
+                                                checklogin={checklogin}
+                                                pk={pk}
+                                            />
+                                        )}
                                     </Stack.Screen>
-                                </>
-                            ) : (
-                                <Stack.Screen name="Home">
-                                    {props => (
-                                        <Home
-                                            {...props}
-                                            userName={userName}
-                                            wallet={wallet}
-                                            userEmail={userEmail}
-                                            checklogin={checklogin}
-                                            pk={pk}
-                                        />
-                                    )}
-                                </Stack.Screen>
-                            )}
-                        <Stack.Screen name="ChatScreen" component={ChatScreen} />
-                        <Stack.Screen name="DetailsContract" component={DetailsContract} />
+                                )}
+                            <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                            <Stack.Screen name="DetailsContract" component={DetailsContract} />
 
-                    </Stack.Navigator>
-                    <StatusBar style="auto" />
-                </NavigationContainer>
+                        </Stack.Navigator>
+                        <StatusBar style="auto" />
+                        </NavigationContainer>
+                    </DemoStageProvider>
                 </ DealsProvider>
         </ApolloProvider>
         </Web3Provider>

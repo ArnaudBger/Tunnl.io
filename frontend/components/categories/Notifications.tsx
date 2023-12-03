@@ -3,11 +3,13 @@ import { View, StyleSheet, Dimensions, Modal, Text, TouchableOpacity } from "rea
 import NotificationCard from "./Notifications/NotificationCard";
 import Chat from './Chats/ChatScreen';
 import { useNavigation } from '@react-navigation/native';
+import { useDemoStage } from '../../utils/DemoContext';
 
-export default function Notifications({demoStage, setDemoStage}
+export default function Notifications({}
     ) {
         const [isModalVisible, setIsModalVisible] = useState(false);
         const [isDemoEnded, setDemoEnded] = useState(false);
+        const  {demoStage, setDemoStage, demoDealID, setDemoDealID}  = useDemoStage();
 
         const navigation = useNavigation();
 

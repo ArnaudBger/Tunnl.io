@@ -2,13 +2,15 @@ import React, {useState}from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import { useDemoStage } from '../../../utils/DemoContext';
 
 const ChatScreen = ({ route }) => {
     const navigation = useNavigation();
-    const { chatId, demoStage, setDemoStage } = route.params;
+    const { chatId } = route.params;
     const [isDealSigned, setIsDealSigned] = useState(false);
     const [isContentPosted, setIsContentPosted] = useState(false);
     const [isContentVerified, setIsContentVerified] = useState(true);
+    const {demoStage, setDemoStage, demoDealID, setDemoDealID} = useDemoStage();
 
   
 

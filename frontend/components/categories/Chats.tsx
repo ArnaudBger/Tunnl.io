@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import { useDemoStage } from '../../utils/DemoContext';
 
 
-export default function Chats({demoStage, setDemoStage}) {
+export default function Chats() {
     const navigation = useNavigation();
+    const {demoStage, setDemoStage, demoDealID, setDemoDealID} = useDemoStage();
 
     const mockChats = [
         { id: 1, brandName: `Macdonald's`, lastMessage: "This is the last message of the conversation", brandlogo:require("../../images/macdonald.jpg") },
@@ -14,7 +16,7 @@ export default function Chats({demoStage, setDemoStage}) {
 
     // In Chats component
         const selectChat = (chatId) => {
-            navigation.navigate("ChatScreen", { chatId, demoStage, setDemoStage});
+            navigation.navigate("ChatScreen", { chatId });
         };
 
 

@@ -19,8 +19,6 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin, pk }) => {
     const [activeCategory, setActiveCategory] = useState("Home")
-    const [demoStage, setDemoStage] = useState("0")
-
     // Function to determine which component to render
     const renderCategoryComponent = () => {
         switch (activeCategory) {
@@ -31,9 +29,9 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin, pk
             case "Contracts":
                 return <Contracts />
             case "Notifications":
-                return <Notifications demoStage={demoStage} setDemoStage={setDemoStage} />
+                return <Notifications />
             case "Chat":
-                return <Chats demoStage={demoStage} setDemoStage={setDemoStage} />
+                return <Chats/>
         }
     }
     return (
