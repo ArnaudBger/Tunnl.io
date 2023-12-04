@@ -20,6 +20,7 @@ from .sendverificationemail import send_verification_email as sve
 from random import randint
 from django.utils import timezone
 from .encryption import decrypt_private_key
+from .readPost import readPost
 
 
 class LoginView(APIView):
@@ -147,6 +148,18 @@ class DeleteUser(APIView):
         response = Response()
         response.data = {
             'message': 'success'
+        }
+        return response
+
+
+class CheckLikesForInsPost(APIView):
+    def post(self, request):
+        url = request.data['url']
+        likes = readPost(url)
+
+        response = Response()
+        response.data = {
+            'message': f'{likes}'
         }
         return response
 

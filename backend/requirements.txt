@@ -78,3 +78,5 @@ django-redis==5.2.0
 google-auth==2.23.3
 eth-account
 web3==5.31.4
+selenium==4.10.0
+webdriver-manager==4.0.1
