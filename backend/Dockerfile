@@ -1,4 +1,4 @@
-# Dockerfile for Django REST API with Selenium and Chrome on CentOS
+# Dockerfile for Django REST API with Selenium and Chrome
 FROM python:3.10
 
 # Set environment variables
@@ -11,12 +11,14 @@ WORKDIR /code
 # Create a new user
 RUN adduser --disabled-password --gecos '' dealrestapiuser
 
-# Install dependencies required for Chrome
-RUN yum -y update && yum install -y wget \
-    && wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
-    && yum install -y ./google-chrome-stable_current_*.rpm \
-    && rm -f google-chrome-stable_current_x86_64.rpm \
-    && yum clean all
+# Install Chrome for Selenium
+RUN apt-get update \
+    && apt-get install -y wget gnupg \
+    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /code/
@@ -32,4 +34,4 @@ USER dealrestapiuser
 COPY . /code/
 
 # Run the application
-CMD ["uwsgi", "--http", "0.0.0.0:8000", "--module", "deal.wsgi", "--master", "--processes", "32", "--threads", "16
+CMD ["uwsgi", "--http", "0.0.0.0:8000", "--module", "deal.wsgi", "--master", "--processes", "32", "--threads", "16", "--honour-stdin"]
