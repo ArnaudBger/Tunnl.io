@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: InfluencerMarketingContract
-    network: sepolia
+    network: fuji # Update to the correct network identifier for Fuji
     source:
-      address: "0x9d8A72E443C024e36d7BA736a82085b33361e254"
+      address: "0x4F911A7f6D9241AD4C36b50617B31489A31166Be"
       abi: InfluencerMarketingContract
-      startBlock: 4776665
+      startBlock: 28293345 # Update with the correct start block on Fuji
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

@@ -29,7 +29,7 @@ export const DealsProvider = ({ children }) => {
         deals,
         loading,
         error,
-        updateDeals // Function to update deals
+        updateDeals 
     };
 
     return (

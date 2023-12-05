@@ -1,8 +1,9 @@
-import React, {useState}from 'react';
+import React, {useContext, useState}from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useDemoStage } from '../../../utils/DemoContext';
+import { DealsContext } from '../../../utils/DealsContext';
 
 const ChatScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -10,6 +11,7 @@ const ChatScreen = ({ route }) => {
     const [isDealSigned, setIsDealSigned] = useState(false);
     const [isContentPosted, setIsContentPosted] = useState(false);
     const [isContentVerified, setIsContentVerified] = useState(true);
+    const { deals, loading, error, updateDeals } = useContext(DealsContext);
     const {demoStage, setDemoStage, demoDealID, setDemoDealID} = useDemoStage();
 
   
@@ -36,6 +38,7 @@ const ChatScreen = ({ route }) => {
         if (transactionSuccessful) {
             setIsDealSigned(true); // Update deal signing status
             setDemoStage(2); // Update the demo stage to 3
+            updateDeals()
         } else {
             // Handle transaction failure (e.g., show an error message)
         }
@@ -47,7 +50,8 @@ const ChatScreen = ({ route }) => {
 
         if (transactionSuccessful) {
             setIsContentPosted(true);
-            setDemoStage(4); // Update the demo stage to 3
+            setDemoStage(3); // Update the demo stage to 3
+            updateDeals()
         } else {
             // Handle transaction failure (e.g., show an error message)
         }

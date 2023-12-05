@@ -4,18 +4,21 @@ import NotificationCard from "./Notifications/NotificationCard";
 import Chat from './Chats/ChatScreen';
 import { useNavigation } from '@react-navigation/native';
 import { useDemoStage } from '../../utils/DemoContext';
+import { useWeb3 } from '../../utils/Web3Context';
 
 export default function Notifications({}
     ) {
         const [isModalVisible, setIsModalVisible] = useState(false);
         const [isDemoEnded, setDemoEnded] = useState(false);
         const  {demoStage, setDemoStage, demoDealID, setDemoDealID}  = useDemoStage();
-
+        const provider = useWeb3();
         const navigation = useNavigation();
 
         const startDemo = () => {
             setDemoStage(1);
             setIsModalVisible(false);
+            //Create a new deal 
+            setDemoDealID
         }
 
         const closeDemo = () => {
