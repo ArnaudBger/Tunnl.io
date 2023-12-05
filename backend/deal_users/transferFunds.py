@@ -18,15 +18,17 @@ def transferFundForRegisteredUser(receiver_address: str):
     sender_address = os.environ.get("SENDER_ADDRESS")
     private_key = os.environ.get("FACET_PRIVATE_KEY")
 
-    amount = web3.toWei(0.05, 'ether')
+    amount = web3.toWei(0.02, 'ether')
     nonce = web3.eth.getTransactionCount(sender_address)
-
+    fuji_testnet_chain_id = 43113
+    gas_price = web3.toWei('25', 'gwei')
     tx = {
         'nonce': nonce,
         'to': receiver_address,
         'value': amount,
         'gas': 2000000,
-        'gasPrice': web3.toWei('10', 'gwei'),
+        'gasPrice': gas_price,
+        'chainId': fuji_testnet_chain_id
     }
 
     signed_tx = web3.eth.account.sign_transaction(tx, private_key)
