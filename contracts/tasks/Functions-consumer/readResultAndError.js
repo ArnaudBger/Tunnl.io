@@ -15,7 +15,7 @@ task(
   )
   .setAction(async (taskArgs) => {
     console.log(`Reading data from Functions consumer contract ${taskArgs.contract} on network ${network.name}`)
-    const consumerContractFactory = await ethers.getContractFactory("FunctionsConsumer")
+    const consumerContractFactory = await ethers.getContractFactory("InfluencerMarketingContract")
     const consumerContract = await consumerContractFactory.attach(taskArgs.contract)
 
     let latestError = await consumerContract.s_lastError()
@@ -25,17 +25,20 @@ task(
     }
 
     let latestResponse = await consumerContract.s_lastResponse()
-    if (latestResponse.length > 0 && latestResponse !== "0x") {
-      const requestConfig = require(path.isAbsolute(taskArgs.configpath)
-        ? taskArgs.configpath
-        : path.join(process.cwd(), taskArgs.configpath))
-      console.log(
-        `\nOn-chain response represented as a hex string: ${latestResponse}\n${decodeResult(
-          latestResponse,
-          requestConfig.expectedReturnType
-        ).toString()}`
-      )
-    } else if (latestResponse == "0x") {
-      console.log("Empty response: ", latestResponse)
-    }
+    console.log(latestResponse)
+
+ 
+    // if (latestResponse.length > 0 && latestResponse !== "0x") {
+    //   const requestConfig = require(path.isAbsolute(taskArgs.configpath)
+    //     ? taskArgs.configpath
+    //     : path.join(process.cwd(), taskArgs.configpath))
+    //   console.log(
+    //     `\nOn-chain response represented as a hex string: ${latestResponse}\n${decodeResult(
+    //       latestResponse,
+    //       requestConfig.expectedReturnType
+    //     ).toString()}`
+    //   )
+    // } else if (latestResponse == "0x") {
+    //   console.log("Empty response: ", latestResponse)
+    // }
   })

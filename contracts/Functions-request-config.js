@@ -38,13 +38,13 @@ const requestConfig = {
   // Secrets can be accessed within the source code with `secrets.varName` (ie: secrets.apiKey). The secrets object can only contain string values.
   // Per-node secrets objects assigned to each DON member. When using per-node secrets, nodes can only use secrets which they have been assigned.
   // Args (string only array) can be accessed within the source code with `args[index]` (ie: args[0]).
-  args: [dealID, impressionsTarget, postURL],
+  args: [impressionsTarget, postURL],
   // Expected type of the returned value
   expectedReturnType: ReturnType.Buffer,
   // Redundant URLs which point to encrypted off-chain secrets
   secrets: {
     // DON level API Keys
-    instagramApiKey: process.env.INSTAGRAM_API_KEY,
+    // instagramApiKey: process.env.INSTAGRAM_API_KEY,
   },
   // Per-node secrets objects assigned to each DON member.
   // When using per-node secrets, nodes can only use secrets which they have been assigned.

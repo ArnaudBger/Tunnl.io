@@ -123,9 +123,9 @@ const {
     // } else {
     //   requestConfig.secretsLocation = Location.Remote // Default to Remote if no secrets are used
     // }
-    console.log(subscriptionId, callbackGasLimit, requestConfig.source, requestConfig.secretsLocation,encryptedSecretsReference)
-    requestConfig.secretsLocation = Location.DONHosted;
-    
+      
+      requestConfig.secretsLocation = Location.Remote // Default to Remote if no secrets are used
+      
       const requestTx = await consumerContract.setRequest(
         subscriptionId,
         callbackGasLimit,

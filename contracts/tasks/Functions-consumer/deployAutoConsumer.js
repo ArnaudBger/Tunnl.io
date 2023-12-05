@@ -31,7 +31,7 @@ task("functions-deploy-auto-consumer", "Deploys the AutomatedFunctionsConsumer c
 
     console.log(`Deploying AutomatedFunctionsConsumer contract to ${network.name}`)
     const autoConsumerContractFactory = await ethers.getContractFactory("InfluencerMarketingContract")
-    const autoConsumerContract = await autoConsumerContractFactory.deploy(functionsRouterAddress, donIdBytes32, "0x4c48a47B87F4Fe3A38C5e3DdBB1e11110b6bc895")
+    const autoConsumerContract = await autoConsumerContractFactory.deploy(functionsRouterAddress, donIdBytes32, "0x97Cd2703B70f97A70d5aA8cf951072b2894677dA")
 
     console.log(`\nWaiting 1 block for transaction ${autoConsumerContract.deployTransaction.hash} to be confirmed...`)
     await autoConsumerContract.deployTransaction.wait(1)

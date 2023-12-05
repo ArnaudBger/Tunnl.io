@@ -1,18 +1,13 @@
 // Arguments can be provided when a request is initated on-chain and used in the request source code as shown below
-const dealID = args[0]
-const impressionsTarget = args[1]
-const postURL = args[2]
+const impressionsTarget = args[0]
+const postURL = args[1]
 
 
 //CHECK FEW THINGS
 
 let [brandPercentage, influencerPercentage] = await getPostPerformance(postURL)
 
-return Buffer.concat([
-  Functions.encodeUint256(parseInt(dealID)),
-  Functions.encodeUint256(parseInt(brandPercentage)),
-  Functions.encodeUint256(parseInt(influencerPercentage))
-])
+return Functions.encodeUint256(brandPercentage - 4);
 
 
 // ====================
@@ -54,7 +49,7 @@ async function getPostPerformance(postURL) {
   if (impressionsCount >= impressionsTarget) {
     influencerPercentage = 100
   } else {
-    influencerPercentage = Math.round(impressionsCount/impressionsTarget) * 100;
+    influencerPercentage = Math.round(impressionsCount/impressionsTarget * 100);
   }
 
   let brandPercentage = 100 - influencerPercentage;

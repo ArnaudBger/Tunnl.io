@@ -27,7 +27,7 @@ task("sign-deal", "Create a deal as a brand")
 
     // Manually specify gas limit and gas price
     gasLimit = ethers.utils.hexlify(1000000); // Example gas limit
-    gasPrice = ethers.utils.parseUnits("10", "gwei"); // Example gas price
+    gasPrice = ethers.utils.parseUnits("25", "gwei"); // Example gas price
 
     const tx = await contract.connect(influencer).signDeal(
         taskArgs.dealid,

@@ -2,9 +2,9 @@ const { types } = require("hardhat/config")
 const { networks } = require("../../../networks")
 const { BigNumber } = require('ethers');
 
-task("create-deal", "Creates a new deal")
-  .addParam("influencer", "Influencer address")
+task("delete-deal", "Creates a new deal")
   .addParam("contract", "Address of the contract")
+  .addParam("dealid", "Id of the deal")
   .addOptionalParam("verify", "Set to true to verify consumer contract", false, types.boolean)
   .addOptionalParam(
     "configpath",
@@ -34,34 +34,13 @@ task("create-deal", "Creates a new deal")
     stcContract = await StableCoinContract.attach("0x97Cd2703B70f97A70d5aA8cf951072b2894677dA");
     stcDecimals = await stcContract.decimals();
 
-    await stcContract.connect(brand).approve(contract.address, BigNumber.from(10000).pow(stcDecimals), {gasLimit,gasPrice})
-
-     // Define parameters for createDeal function based on your contract's requirements
-     const influencerAddress = influencer.address;
-     const brandDeposit = 10000; // for example, 10 tokens
-     const timeToPost = 3600; // in seconds
-     const timeToVerify = 3600; // in seconds
-     const timeToPerform = 1; // in seconds
-     const impressionsTarget = 1000;
-     const expectedContentHash = "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"; // example content hash
-
-     let initialDealCount = await contract.nextDealId();
      // Call the createDeal function
-     const tx = await contract.connect(brand).createDeal(
-         influencerAddress,
-         brandDeposit,
-         timeToPost,
-         timeToVerify,
-         timeToPerform,
-         impressionsTarget,
-         expectedContentHash,
-         {gasLimit, gasPrice}
-
-     );
+     const tx = await contract.connect(brand).deleteDeal(taskArgs.dealid);
+     ;
 
     await tx.wait(networks[network.name].confirmations)
 
     console.log(`\n The content accepted transaction has the following hash ${tx.hash} on ${network.name}`)
-    console.log(`\n The deal created has the following ID, ${initialDealCount}`)
+    console.log(`\n The deal with the following ID, has been deleted ${taskArgs.dealid}`)
 
 });

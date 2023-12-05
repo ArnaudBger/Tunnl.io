@@ -31,7 +31,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   bytes public s_lastError;
 
   // Perform algorithm source code
-  string source;
+  string public source;
   FunctionsRequest.Location secretsLocation;
   bytes encryptedSecretsReference;
 
@@ -39,6 +39,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   uint256 public s_lastUpkeepTimeStamp;
   uint256 public s_upkeepCounter;
   uint256 public s_responseCounter;
+
 
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
@@ -83,6 +84,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   mapping(uint256 => DealBasics) public dealBasics;
   mapping(uint256 => DealDeadlines) public dealDeadlines;
   mapping(uint256 => DealDetails) public dealDetails;
+  mapping(uint256 => uint256) private upkeepDealIdMapping;
 
   // Define a new role for Haha Labs' administrator
   address public hahaLabsVerifier;
@@ -162,46 +164,42 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
    * Returns a tuple where the first element is a boolean which determines if upkeep is needed and the
    * second element contains custom bytes data which is passed to performUpkeep when it is called by Automation.
    */
-  function checkUpkeep(bytes memory) public view override returns (bool upkeepNeeded, bytes memory) {
-    uint256[] storage dealsToCheck = performDeals;
+  // Refactored checkUpkeep function
+    function checkUpkeep(bytes memory) public view override returns (bool upkeepNeeded, bytes memory) {
+        for (uint256 i = 0; i < performDeals.length; i++) {
+            uint256 dealId = performDeals[i];
+            DealDeadlines storage deadlines = dealDeadlines[dealId];
+            if (block.timestamp >= deadlines.performDeadline && dealBasics[dealId].status == DealStatus.Active) {
+                return (true, abi.encode(dealId, i));
+            }
+        }
+        return (false, bytes(""));
+  }
 
-    for (uint256 i = 0; i < dealsToCheck.length; i++) {
-      uint256 dealId = dealsToCheck[i];
-      DealDeadlines storage deadlines = dealDeadlines[dealId];
-      if (block.timestamp >= deadlines.performDeadline) {
-        return (true, abi.encode(dealId));
-      }
+  // Refactored performUpkeep function
+    function performUpkeep(bytes calldata performData) external override {
+        (uint256 dealId, uint256 index) = abi.decode(performData, (uint256, uint256));
+        (bool upkeepNeeded, ) = checkUpkeep("");
+        require(upkeepNeeded, "Condition not met");
+        _executeUpkeep(dealId, index);
     }
+    
 
-    return (false, bytes(""));
-  }
-
-  function performUpkeep(bytes calldata performData) external override {
-    uint256 dealId = _decodePerformData(performData);
-    _validateDealForUpkeep(dealId);
-    _executeUpkeep(dealId);
-  }
-
-  function _decodePerformData(bytes calldata performData) internal pure returns (uint256) {
-    return abi.decode(performData, (uint256));
-  }
-
-  function _validateDealForUpkeep(uint256 dealId) internal view {
-    DealBasics storage basics = dealBasics[dealId];
-    DealDeadlines storage deadlines = dealDeadlines[dealId];
-    require(block.timestamp >= deadlines.performDeadline, "The deal provided is not at the performance stage...");
-    require(basics.status == DealStatus.Active, "The deal provided is not active");
-    (bool upkeepNeeded, ) = checkUpkeep("");
-    require(upkeepNeeded, "Condition not met");
-  }
-
-  function _executeUpkeep(uint256 dealId) internal {
-    s_lastUpkeepTimeStamp = block.timestamp;
-    s_upkeepCounter = s_upkeepCounter + 1;
-
+  function _executeUpkeep(uint256 dealId, uint256 index) internal {
+    // Store the dealId with the current upkeep counter
+    upkeepDealIdMapping[s_upkeepCounter] = dealId;
     FunctionsRequest.Request memory req = _prepareRequest(dealId);
     s_lastRequestId = _sendRequest(req.encodeCBOR(), s_subscriptionId, s_fulfillGasLimit, donId);
+    _removeDealFromCheckList(index);
+    s_upkeepCounter = s_upkeepCounter + 1;
   }
+
+  // Refactored _removeDealFromCheckList function
+    function _removeDealFromCheckList(uint256 index) internal {
+        require(index < performDeals.length, "Deal not found in the list");
+        performDeals[index] = performDeals[performDeals.length - 1];
+        performDeals.pop();
+    }
 
   function _prepareRequest(uint256 dealId) internal view returns (FunctionsRequest.Request memory) {
     FunctionsRequest.Request memory req;
@@ -211,10 +209,9 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
 
     DealDetails storage details = dealDetails[dealId];
 
-    string[] memory args = new string[](3);
-    args[0] = Strings.toString(dealId);
-    args[1] = Strings.toString(details.impressionsTarget);
-    args[2] = details.postURL;
+    string[] memory args = new string[](2);
+    args[0] = Strings.toString(details.impressionsTarget);
+    args[1] = details.postURL;
     req.setArgs(args);
 
     return req;
@@ -229,26 +226,22 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
    * Either response or error parameter will be set, but never both
    */
   function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
-    require(response.length == 96, "Invalid response length");
+    // Retrieve the dealId using the responseCounter
+    uint256 dealId = upkeepDealIdMapping[s_responseCounter];
 
-    s_lastResponse = response;
-    s_lastError = err;
     s_responseCounter = s_responseCounter + 1;
 
-    uint256 dealId;
     uint256 brandPercentage;
-    uint256 influencerPercentage;
 
-    // Decoding the response
-    (dealId, brandPercentage, influencerPercentage) = abi.decode(response, (uint256, uint256, uint256));
+    (brandPercentage) = abi.decode(response, (uint256));
 
     DealBasics storage basics = dealBasics[dealId];
 
-    uint256 influencerAmount = (basics.brandDeposit * influencerPercentage) / 100;
-    uint256 brandAmount = (basics.brandDeposit * brandPercentage) / 100;
-    uint256 treasuryAmount = basics.brandDeposit - brandAmount - influencerAmount;
+    uint256 treasuryPercentage = 4;
 
-    require(influencerAmount + brandAmount <= basics.brandDeposit, "Total transfer amount exceeds deposit");
+    uint256 brandAmount = (basics.brandDeposit * brandPercentage) / 100;
+    uint256 treasuryAmount = (basics.brandDeposit * treasuryPercentage) / 100;
+    uint256 influencerAmount = basics.brandDeposit - brandAmount - treasuryAmount;
 
     _payAddress(basics.influencer, influencerAmount);
     _payAddress(basics.brand, brandAmount);
@@ -256,7 +249,6 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
 
     basics.status = DealStatus.Done;
     emit DealCompleted(dealId, influencerAmount, brandAmount, treasuryAmount);
-    emit OCRResponse(requestId, response, err);
   }
 
   /**
