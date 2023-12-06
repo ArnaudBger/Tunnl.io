@@ -35,6 +35,3 @@ def send_welcome_email(to_email: str, name: str, wallet_address: str, transactio
     except Exception as error:
         print(f"Failed to send the email: {error}")
         return False
-
-
-send_welcome_email("wangge326@gmail.com", "asdfasdf", "asdfasdf", 'asdfasdf')
