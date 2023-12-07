@@ -14,8 +14,10 @@ import ChatScreen from "./components/Categories/Chats/ChatScreen"
 import DetailsContract from "./components/Categories/Contracts/DetailsContract"
 import { DealsProvider } from "./utils/DealsContext"
 import { DemoStageProvider } from "./utils/DemoContext"
+import { TransactionProvider } from "./utils/TransactionContext"
+import TransactionModal from "./components/Transaction"
 
-const APIURL = "https://api.studio.thegraph.com/query/59587/haha_subgraph/v0.0.10"
+const APIURL = "https://api.studio.thegraph.com/query/59587/haha_subgraph/v0.3.8"
 
 const client = new ApolloClient({
     uri: APIURL,
@@ -65,45 +67,48 @@ export default function App() {
     useEffect(() => {
         checklogin()
     }, [])
-
+    
     return (
         <Web3Provider>
             <ApolloProvider client={client}>
-                <DealsProvider>
+                <DealsProvider wallet={wallet}>
                     <DemoStageProvider>
-                        <NavigationContainer>
-                            <Stack.Navigator
-                                screenOptions={{
-                                    headerShown: false
-                                }}
-                            >
-                                {userName === "" ? (
-                                    <>
-                                        <Stack.Screen name="GetStarted" component={GetStartedPage} />
-                                        <Stack.Screen name="Login">
-                                            {props => <LoginPage {...props} checklogin={checklogin} />}
+                    <TransactionProvider>
+                        <TransactionModal />
+                            <NavigationContainer>
+                                <Stack.Navigator
+                                    screenOptions={{
+                                        headerShown: false
+                                    }}
+                                >
+                                    {userName === "" ? (
+                                        <>
+                                            <Stack.Screen name="GetStarted" component={GetStartedPage} />
+                                            <Stack.Screen name="Login">
+                                                {props => <LoginPage {...props} checklogin={checklogin} />}
+                                            </Stack.Screen>
+                                        </>
+                                    ) : (
+                                        <Stack.Screen name="Home">
+                                            {props => (
+                                                <Home
+                                                    {...props}
+                                                    userName={userName}
+                                                    wallet={wallet}
+                                                    userEmail={userEmail}
+                                                    checklogin={checklogin}
+                                                    pk={pk}
+                                                />
+                                            )}
                                         </Stack.Screen>
-                                    </>
-                                ) : (
-                                    <Stack.Screen name="Home">
-                                        {props => (
-                                            <Home
-                                                {...props}
-                                                userName={userName}
-                                                wallet={wallet}
-                                                userEmail={userEmail}
-                                                checklogin={checklogin}
-                                                pk={pk}
-                                            />
-                                        )}
-                                    </Stack.Screen>
-                                )}
-                            <Stack.Screen name="ChatScreen" component={ChatScreen} />
-                            <Stack.Screen name="DetailsContract" component={DetailsContract} />
+                                    )}
+                                <Stack.Screen name="ChatScreen" component={ChatScreen} />
+                                <Stack.Screen name="DetailsContract" component={DetailsContract} />
 
-                        </Stack.Navigator>
-                        <StatusBar style="auto" />
-                        </NavigationContainer>
+                            </Stack.Navigator>
+                            <StatusBar style="auto" />
+                            </NavigationContainer>
+                        </TransactionProvider>
                     </DemoStageProvider>
                 </ DealsProvider>
         </ApolloProvider>

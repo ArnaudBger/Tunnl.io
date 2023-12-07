@@ -1,6 +1,8 @@
 import { useQuery, gql } from "@apollo/client"
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from "react-native"
 import { AntDesign } from "@expo/vector-icons"
+import { GET_TOTAL_EARNED_BY_INFLUENCER } from '../../../queries/getTotalEarned';
+
 
 interface BaseProps {
     userName: string
@@ -8,6 +10,8 @@ interface BaseProps {
     userEmail: string
 }
 const Overview: React.FC<BaseProps> = ({ userName, wallet, userEmail }) => {
+    const { loading, error, data} = useQuery(GET_TOTAL_EARNED_BY_INFLUENCER, {variables: { influencerId: wallet.toLowerCase() }});
+    
     return (
         <View style={styles.container}>
             <View style={styles.upperPart}>
@@ -24,20 +28,20 @@ const Overview: React.FC<BaseProps> = ({ userName, wallet, userEmail }) => {
                 </View>
                 <View style={styles.bigCard}>
                     <View style={styles.upperPartBigCard}>
-                        <Text style={styles.upperPartCardTitle}>email</Text>
+                        <Text style={styles.upperPartCardTitle}>Total value earned within our platform</Text>
                     </View>
                     <View>
-                        <Text style={styles.value}>{userEmail}</Text>
+                        <Text style={styles.value}>
+                                {data && data.user && data.user.totalAmountEarned ? data.user.totalAmountEarned : '0'} $TNL
+                        </Text>
                     </View>
                 </View>
                 <View style={styles.littleCardsContainer}>
                     <View style={styles.littleCard1}>
                         <View>
-                            <Text style={styles.upperPartCardTitle}>Change in followers</Text>
+                            <Text style={styles.upperPartCardTitle}>Email</Text>
                         </View>
-                        <View>
-                            <Text style={styles.value}>Values</Text>
-                        </View>
+                        <Text style={styles.value}>{userEmail}</Text>
                     </View>
                     <View style={styles.littleCard2}>
                         <View>

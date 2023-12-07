@@ -7,20 +7,19 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator
 export default function Contracts() {
     const navigation = useNavigation();
     const { deals, loading, error} = useContext(DealsContext);
-
     if (loading) return (
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="black" />
       </View>
     );
     if (error) return <Text>Error : {error.message}</Text>;
-
+    
     // Categorize deals
     const activeDeals = deals.filter(deal => deal.status == '1');
     const activeDealsLength = Object.keys(activeDeals).length;
-    const doneDeals = deals.filter(deal => deal.status == '2');
+    const doneDeals = deals.filter(deal => deal.status == '0');
     const doneDealsLength =  Object.keys(doneDeals).length;
-    const failedDeals = deals.filter(deal => deal.status == '0');
+    const failedDeals = deals.filter(deal => deal.status == '2');
     const failedDealsLength =  Object.keys(failedDeals).length;
 
     const navigateToDetails = (deal) => {

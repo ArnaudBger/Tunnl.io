@@ -29,9 +29,9 @@ const Home: React.FC<HomeProps> = ({ userName, wallet, userEmail, checklogin, pk
             case "Contracts":
                 return <Contracts />
             case "Notifications":
-                return <Notifications />
+                return <Notifications wallet={wallet} pk={pk}/>
             case "Chat":
-                return <Chats/>
+                return <Chats pk={pk} />
         }
     }
     return (

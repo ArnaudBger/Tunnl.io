@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useDemoStage } from '../../utils/DemoContext';
 
 
-export default function Chats() {
+export default function Chats({pk}) {
     const navigation = useNavigation();
     const {demoStage, setDemoStage, demoDealID, setDemoDealID} = useDemoStage();
 
@@ -16,7 +16,7 @@ export default function Chats() {
 
     // In Chats component
         const selectChat = (chatId) => {
-            navigation.navigate("ChatScreen", { chatId });
+            navigation.navigate("ChatScreen", { chatId, pk });
         };
 
 

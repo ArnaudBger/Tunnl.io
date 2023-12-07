@@ -1,16 +1,23 @@
 const { BigNumber } = require('ethers');
 
 task("balance-stc", "Prints an account's balance")
-  .addParam("account", "The account's address")
   .addParam("contract", "The stable coin contract address")
   .setAction(async (taskArgs) => {
+    // Manually specify gas limit and gas price
+    gasLimit = ethers.utils.hexlify(1000000); // Example gas limit
+    gasPrice = ethers.utils.parseUnits("25", "gwei"); // Example gas price
+    
     const stcContractFactory = await ethers.getContractFactory("SimpleStableCoin")
     const stcContract = await stcContractFactory.attach(taskArgs.contract)
     const stcDecimals = await stcContract.decimals()
-    const balance = await stcContract.balanceOf(taskArgs.account)
-    const balanceBigNumber = BigNumber.from(balance);
-    const realBalance = balanceBigNumber.mul(BigNumber.from(10).pow(stcDecimals));
-    console.log(realBalance, "STC")
+    const amountToApprove = 100000
+    const amountToApproveBigNumber = BigNumber.from(amountToApprove);
+    const realamountToApprove = amountToApproveBigNumber.mul(BigNumber.from(10).pow(stcDecimals));
+
+    [dev, brand] = await ethers.getSigners();
+
+    await stcContract.connect(brand).approve("0x1a4aC33A1997B39cC151503bacb393e14EFF48A8", realamountToApprove, {gasLimit,gasPrice})
+    console.log(realamountToApprove, "STC")
   })
 
 module.exports = {}

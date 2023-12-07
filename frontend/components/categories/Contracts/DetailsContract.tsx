@@ -83,7 +83,10 @@ const DetailsContract = ({ route, navigation }) => {
                 {dealStage === 'PERFORMANCE' && (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Performance Information</Text>
-                        <InformationRow label="Performance Ends On" value={formatDate(deal?.performDeadline)} />
+                        <InformationRow label="Time" value={formatDate(deal?.dealCompleted[0]?.blockTimestamp)} />
+                        <InformationRow label="brandAmount" value={(deal?.dealCompleted[0]?.brandAmount)} />
+                        <InformationRow label="influencerAmount" value={(deal?.dealCompleted[0]?.influencerAmount)} />
+                        <InformationRow label="treasuryAmount" value={(deal?.dealCompleted[0]?.treasuryAmount)} />
                     </View>
                 )}
     

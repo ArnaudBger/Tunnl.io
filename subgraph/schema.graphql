@@ -116,4 +116,5 @@ type User @entity {
   id: ID!
   dealsAsBrand: [Deal!]! @derivedFrom(field: "brand")
   dealsAsInfluencer: [Deal!]! @derivedFrom(field: "influencer")
+  totalAmountEarned: BigInt! # uint256
 }

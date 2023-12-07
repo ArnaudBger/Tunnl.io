@@ -21,6 +21,8 @@ import {
   DisputedContentVerified,
 } from "../generated/schema"
 
+import { BigInt } from "@graphprotocol/graph-ts";
+
 
 export function handleDealCreated(event: DealCreatedEvent): void {
   let entity = new Deal(event.params.dealId.toString())
@@ -29,17 +31,20 @@ export function handleDealCreated(event: DealCreatedEvent): void {
   let brandAddress = event.params.param1.brand.toHexString();
   let brandUser = User.load(brandAddress);
 
-  if (brandUser == null) {
+  if (!brandUser) {
     brandUser = new User(brandAddress);
-    brandUser.save();
-  }
+    brandUser.totalAmountEarned = BigInt.fromString("0");
+  } ;
+  
+  brandUser.save();
 
   // Load the user entity associated with the influencer address
   let influencerAddress = event.params.param1.influencer.toHexString();
   let influencerUser = User.load(influencerAddress);
 
-  if (influencerUser == null) {
+  if (!influencerUser) {
     influencerUser = new User(influencerAddress);
+    influencerUser.totalAmountEarned = BigInt.fromString("0");
     influencerUser.save();
   }
 
@@ -168,7 +173,8 @@ export function handleDealCompleted(event: DealCompletedEvent): void {
   )
    // Load the Deal entity associated with the dealId from the event
    let dealID = event.params.dealId.toString()
-  
+   let influencerAmount = event.params.influencerAmount
+
    let deal = Deal.load(dealID);
    if (!deal) {
      // If the deal is not found, it might indicate a logical error or missing data
@@ -190,6 +196,16 @@ export function handleDealCompleted(event: DealCompletedEvent): void {
 
   //Update deal status
   deal.status = 0
+  deal.save()
+
+  let influencerAddress = deal.influencer
+  let influencer = User.load(influencerAddress)
+
+  if(!influencer) {
+    return
+  }
+  influencer.totalAmountEarned = influencer.totalAmountEarned.plus(influencerAmount)
+  influencer.save()
 }
 
 
@@ -216,6 +232,8 @@ export function handleDepositRefunded(event: DepositRefundedEvent): void {
 
   //Update deal status
   deal.status = 2
+  deal.save()
+
 }
 
 export function handleDisputedContentVerified(

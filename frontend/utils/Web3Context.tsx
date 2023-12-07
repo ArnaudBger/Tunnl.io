@@ -13,8 +13,8 @@ export const Web3Provider = ({ children }) => {
 
   useEffect(() => {
     const initWeb3 = () => {
-      const web3Provider = new JsonRpcProvider("https://virulent-methodical-fire.ethereum-sepolia.quiknode.pro/8a036bae16c1e82885836ef28400854986f06d03/");
-      setProvider(web3Provider);
+      const web3Provider = new JsonRpcProvider("https://autumn-old-asphalt.avalanche-testnet.quiknode.pro/16128feba576c573fdc199c73c4ba1aa35490344/ext/bc/C/rpc/");
+      setProvider(web3Provider); 
     };
 
     initWeb3();

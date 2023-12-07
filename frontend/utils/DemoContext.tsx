@@ -8,7 +8,6 @@ const DemoStageContext = createContext();
 export const DemoStageProvider = ({ children }) => {
     const [demoStage, setDemoStage] = useState("0");
     const [demoDealID, setDemoDealID] = useState(null);
-
     return (
         <DemoStageContext.Provider value={{ demoStage, setDemoStage, demoDealID, setDemoDealID }}>
             {children}

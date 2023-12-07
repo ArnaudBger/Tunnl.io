@@ -1427,6 +1427,19 @@ export class User extends Entity {
       "dealsAsInfluencer"
     );
   }
+
+  get totalAmountEarned(): BigInt {
+    let value = this.get("totalAmountEarned");
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set totalAmountEarned(value: BigInt) {
+    this.set("totalAmountEarned", Value.fromBigInt(value));
+  }
 }
 
 export class ContentAcceptedLoader extends Entity {

@@ -1,25 +1,72 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, StyleSheet, Dimensions, Modal, Text, TouchableOpacity } from "react-native";
 import NotificationCard from "./Notifications/NotificationCard";
-import Chat from './Chats/ChatScreen';
 import { useNavigation } from '@react-navigation/native';
 import { useDemoStage } from '../../utils/DemoContext';
 import { useWeb3 } from '../../utils/Web3Context';
+import { ethers } from 'ethers';
+import { Alert } from 'react-native';
+import { BRAND_ACCOUNT_PRIVATE_KEY } from '@env'
+import {tunnlContractABI, tunnlContractAddress, stcContractABI, stcContractAddress} from '../../utils/contractInfo'; // Path to your contract ABI
+import { DealsContext } from '../../utils/DealsContext';
+import { useTransaction } from '../../utils/TransactionContext';
 
-export default function Notifications({}
-    ) {
+export default function Notifications({wallet, pk}
+    ) { 
+        const { startTransaction, endTransaction } = useTransaction();
         const [isModalVisible, setIsModalVisible] = useState(false);
         const [isDemoEnded, setDemoEnded] = useState(false);
         const  {demoStage, setDemoStage, demoDealID, setDemoDealID}  = useDemoStage();
         const provider = useWeb3();
         const navigation = useNavigation();
+        const {deals, loading, error, updateDeals} = useContext(DealsContext)
 
-        const startDemo = () => {
-            setDemoStage(1);
-            setIsModalVisible(false);
-            //Create a new deal 
-            setDemoDealID
-        }
+        const startDemo = async () => {
+            try {
+                // Create a wallet instance from the private key
+                const signer = new ethers.Wallet(BRAND_ACCOUNT_PRIVATE_KEY, provider);
+        
+                // Create a new instance of the contract
+                const tunnlContract = new ethers.Contract(tunnlContractAddress, tunnlContractABI, signer);
+        
+                // Get the next deal ID (assuming it's a BigInt)
+                let dealIdBigInt = await tunnlContract.nextDealId();
+                let dealId = dealIdBigInt.toString(); // Convert BigInt to string to safely handle large numbers
+        
+                // Update transaction state to "started"
+                startTransaction();
+                
+                // Call the createDeal function
+                const transaction = await tunnlContract.createDeal(
+                    wallet, 10000, 3600, 3600, 10, 1000, "0xaf0ce9c95a4a15b4aca49063258060870978337d4dd662521086aca28af1fcfb"
+                );
+
+                // Wait for the transaction to be mined
+                const receipt = await transaction.wait();
+        
+                // Update transaction state to "ended"
+                // After the transaction is completed
+                endTransaction(receipt.status === 1 ? 'success' : 'failed', transaction.hash);
+        
+                // Update the demo stage and deal ID
+                setDemoStage(1);
+                setDemoDealID(dealId);
+        
+                // Close the modal and show success alert
+                setIsModalVisible(false);
+                
+                 // Wait for a while before updating deals to give the subgraph time to update
+                setTimeout(() => {
+                    updateDeals();
+                }, 10000); // Wait for 5 seconds (5000 milliseconds)
+                 
+            } catch (error) {
+                console.error('Transaction failed:', error);
+        
+                // Update transaction state to "failed"
+                endTransaction('failed');
+            }
+        };
 
         const closeDemo = () => {
             setIsModalVisible(false);
@@ -37,7 +84,7 @@ export default function Notifications({}
 
         const openAgreementChat = () => {
             chatId = 1
-            navigation.navigate("ChatScreen", { chatId, demoStage, setDemoStage});
+            navigation.navigate("ChatScreen", { chatId, pk});
         };
 
     return (

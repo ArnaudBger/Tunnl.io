@@ -1,20 +1,31 @@
 import React, {useContext, useState}from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from "react-native";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useDemoStage } from '../../../utils/DemoContext';
 import { DealsContext } from '../../../utils/DealsContext';
+import { BRAND_ACCOUNT_PRIVATE_KEY } from '@env'
+import { ethers } from 'ethers';
+import { Alert } from 'react-native';
+import {tunnlContractABI, tunnlContractAddress} from '../../../utils/contractInfo'; // Path to your contract ABI
+import { useWeb3 } from '../../../utils/Web3Context';
+import { useTransaction } from '../../../utils/TransactionContext';
 
-const ChatScreen = ({ route }) => {
+const ChatScreen = ({ route}) => {
+    const { startTransaction, endTransaction } = useTransaction();
     const navigation = useNavigation();
-    const { chatId } = route.params;
-    const [isDealSigned, setIsDealSigned] = useState(false);
-    const [isContentPosted, setIsContentPosted] = useState(false);
-    const [isContentVerified, setIsContentVerified] = useState(true);
+    const { chatId, pk } = route.params;
     const { deals, loading, error, updateDeals } = useContext(DealsContext);
-    const {demoStage, setDemoStage, demoDealID, setDemoDealID} = useDemoStage();
+    const provider = useWeb3();
+    const {demoStage, setDemoStage, demoDealID} = useDemoStage();
+    const [postUrl, setPostUrl] = useState('');
 
-  
+
+    const wallet1 = new ethers.Wallet(pk, provider);
+    const wallet2 = new ethers.Wallet(BRAND_ACCOUNT_PRIVATE_KEY, provider);
+    // Create two instances of the contract, one for each wallet
+    const tunnlContractWithWallet1 = new ethers.Contract(tunnlContractAddress, tunnlContractABI, wallet1);
+    const tunnlContractWithWallet2 = new ethers.Contract(tunnlContractAddress, tunnlContractABI, wallet2);
 
     //GET INFORMATION RELATED TO THIS CHAT ID...
     
@@ -31,29 +42,73 @@ const ChatScreen = ({ route }) => {
         navigation.navigate('Home');
     };
     
-    const handleSignDeal = () => {
-        // Simulate a transaction (e.g., signing the deal)
-        const transactionSuccessful = true; // Replace with actual transaction logic
+    const handleSignDeal = async () => {
+        try {
+            // Update transaction state to "started"
+            startTransaction();
+            const transaction = await tunnlContractWithWallet1.signDeal(demoDealID)
+            const receipt = await transaction.wait();
 
-        if (transactionSuccessful) {
-            setIsDealSigned(true); // Update deal signing status
-            setDemoStage(2); // Update the demo stage to 3
-            updateDeals()
-        } else {
-            // Handle transaction failure (e.g., show an error message)
+            // Update transaction state to "ended"
+            // After the transaction is completed
+            endTransaction(receipt.status === 1 ? 'success' : 'failed', transaction.hash);
+        
+            setDemoStage(2); // Update the demo stage to 2
+             // Wait for a while before updating deals to give the subgraph time to update
+             setTimeout(() => {
+                updateDeals();
+            }, 10000); // Wait for 5 seconds (5000 milliseconds)
+             
+            
+        } catch (error) {
+            console.error('Transaction failed:', error);
+            // Update transaction state to "failed"
+            endTransaction('failed');
         }
     };
     
-    const handlePostContent = () => {
-        // Simulate a transaction (e.g., posting the content)
-        const transactionSuccessful = true; // Replace with actual transaction logic
-
-        if (transactionSuccessful) {
-            setIsContentPosted(true);
+    const handlePostContent = async () => {
+        try {
+            // Update transaction state to "started"
+            startTransaction();
+            const transaction = await tunnlContractWithWallet1.postContent(demoDealID, postUrl)
+            const receipt = await transaction.wait();
             setDemoStage(3); // Update the demo stage to 3
-            updateDeals()
-        } else {
+             // Wait for a while before updating deals to give the subgraph time to update
+             setTimeout(() => {
+                updateDeals();
+            }, 10000); // Wait for 5 seconds (5000 milliseconds)
+             
+
+            // Update transaction state to "ended"
+            // After the transaction is completed
+            endTransaction(receipt.status === 1 ? 'success' : 'failed', transaction.hash);
+
+            handleVerification()
+        } catch (error) {
+            console.error('Transaction failed:', error);
+            // Update transaction state to "failed"
+            endTransaction('failed');
+        }
+    };
+
+    const handleVerification = async () => {
+        try {
+            const transaction = await tunnlContractWithWallet2.acceptContent(demoDealID)
+            const receipt = await transaction.wait();
+
+            setDemoStage(4); // Update the demo stage to 4
+            setTimeout(() => {
+                updateDeals();
+            }, 20000); // Wait for 10 seconds (10000 milliseconds)
+             
+            Alert.alert("The deal has been signed my macdonald's");
+        } catch (error) {
             // Handle transaction failure (e.g., show an error message)
+            console.error('Transaction failed:', error);
+            // Transaction failed
+            Alert.alert("Failed", "The deal verification has failed...");
+
         }
     };
 
@@ -66,7 +121,7 @@ const ChatScreen = ({ route }) => {
         { sender: 'user', text: 'Sounds great. What’s the deadline for posting?', time: '9:15 AM', stage:0},
         { sender: 'other', text: 'Please post it within the next 3 days. We’ll verify it within 3 hours of posting.', time: '9:20 AM', stage:0},
         { sender: 'user', text: 'Got it. And what about the performance targets?', time: '9:25 AM', stage:0},
-        { sender: 'other', text: 'We are aiming for 100,000 impressions on your post. If this target is reached, we will pay you $1,000.', time: '9:30 AM', stage:0},
+        { sender: 'other', text: 'We are aiming for 10000 likes on your post. If this target is reached, we will pay you $1,000.', time: '9:30 AM', stage:0},
         { sender: 'user', text: 'That sounds fair. I’m confident we can hit that target. Let’s do this!', time: '9:35 AM', stage:0},
         { sender: 'other', text: 'Great! We’ll formalize this in the deal. Looking forward to seeing the results.', time: '9:40 AM', stage:0},
         { sender: 'user', text: 'Perfect! I’ll start preparing the post. Excited for this collaboration!', time: '9:45 AM', stage:0},
@@ -134,29 +189,42 @@ const ChatScreen = ({ route }) => {
                                 <View style={styles.dealContainer}>
                                     <Text style={styles.dealDescription}>{message.deal.description}</Text>
                                     <Text style={styles.dealTerms}>{message.deal.terms}</Text>
-                                    {message.deal.actionCategory === "Signing" && !isDealSigned && (
+                                    {message.deal.actionCategory === "Signing" && (demoStage == 1) && (
                                         <TouchableOpacity style={styles.signButton} onPress={handleSignDeal}>
                                             <Text style={styles.signButtonText}>Sign Deal</Text>
                                         </TouchableOpacity>
                                     )}
-                                    {message.deal.actionCategory === "Signing" && isDealSigned && (
+                                    {message.deal.actionCategory === "Signing" && (demoStage >= 2) && (
                                         <View style={styles.signedContainer}>
                                             <Icon name="checkmark-circle" size={20} color="green" />
                                             <Text style={styles.signedText}>Signed Verified</Text>
                                         </View>
                                     )}
-                                    {message.deal.actionCategory === "Posting" && !isContentPosted && (
+                                    {message.deal.actionCategory === "Posting" && (demoStage == 2) && (
+                                         <>
+                                        <TextInput 
+                                        style={styles.postUrlInput}
+                                        placeholder="Enter Post URL"
+                                        value={postUrl}
+                                        onChangeText={setPostUrl}
+                                        />
                                         <TouchableOpacity style={styles.signButton} onPress={handlePostContent}>
                                             <Text style={styles.signButtonText}>Post Content</Text>
                                         </TouchableOpacity>
+                                        </>
                                     )}
-                                    {message.deal.actionCategory === "Posting" && isContentPosted && (
+                                    {message.deal.actionCategory === "Posting" && (demoStage >= 3)  && (
                                         <View style={styles.signedContainer}>
                                             <Icon name="checkmark-circle" size={20} color="green" />
                                             <Text style={styles.signedText}>Content Posted Verified</Text>
                                         </View>
                                     )}
-                                    {message.deal.actionCategory === "Verification" && isContentVerified && (
+                                    {message.deal.actionCategory === "Verification" && (demoStage == 3) && (
+                                            <View style={styles.signButton}>
+                                            <Text style={styles.signButtonText}>Wait brand verification</Text>
+                                            </View>
+                                    )}
+                                    {message.deal.actionCategory === "Verification" && (demoStage == 4) && (
                                         <View style={styles.signedContainer}>
                                             <Icon name="checkmark-circle" size={20} color="green" />
                                             <Text style={styles.signedText}>Content Verified</Text>
@@ -276,6 +344,14 @@ const styles = StyleSheet.create({
         color: 'grey',
         marginTop: 5,
         alignSelf: 'flex-end', // Align the timestamp to the end of the message container
+    },
+    postUrlInput: {
+        // Define your TextInput styles here
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        margin: 10,
+        paddingHorizontal: 10,
     },
 });
 

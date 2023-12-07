@@ -6,9 +6,9 @@ dataSources:
     name: InfluencerMarketingContract
     network: fuji # Update to the correct network identifier for Fuji
     source:
-      address: "0x4F911A7f6D9241AD4C36b50617B31489A31166Be"
+      address: "0x1a4aC33A1997B39cC151503bacb393e14EFF48A8"
       abi: InfluencerMarketingContract
-      startBlock: 28293345 # Update with the correct start block on Fuji
+      startBlock: 28338429 # Update with the correct start block on Fuji
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
