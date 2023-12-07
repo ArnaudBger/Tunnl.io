@@ -121,7 +121,7 @@ const ChatScreen = ({ route}) => {
         { sender: 'user', text: 'Sounds great. What’s the deadline for posting?', time: '9:15 AM', stage:0},
         { sender: 'other', text: 'Please post it within the next 3 days. We’ll verify it within 3 hours of posting.', time: '9:20 AM', stage:0},
         { sender: 'user', text: 'Got it. And what about the performance targets?', time: '9:25 AM', stage:0},
-        { sender: 'other', text: 'We are aiming for 10000 likes on your post. If this target is reached, we will pay you $1,000.', time: '9:30 AM', stage:0},
+        { sender: 'other', text: 'We are aiming for 10000 likes on your post. If this target is reached, we will pay you 10,000 $TNL.', time: '9:30 AM', stage:0},
         { sender: 'user', text: 'That sounds fair. I’m confident we can hit that target. Let’s do this!', time: '9:35 AM', stage:0},
         { sender: 'other', text: 'Great! We’ll formalize this in the deal. Looking forward to seeing the results.', time: '9:40 AM', stage:0},
         { sender: 'user', text: 'Perfect! I’ll start preparing the post. Excited for this collaboration!', time: '9:45 AM', stage:0},
