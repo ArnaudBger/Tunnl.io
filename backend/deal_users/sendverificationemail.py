@@ -15,8 +15,8 @@ headers = {
 def send_verification_email(to_email: str, verification_code: str) -> bool:
     payload = {
         "sender": {
-            "name": "Haha Labs Team",
-            "email": "noreply@haha.labs",
+            "name": "Tunnl Team",
+            "email": "noreply@tunnl.io",
         },
         "to": [
             {
@@ -24,8 +24,8 @@ def send_verification_email(to_email: str, verification_code: str) -> bool:
                 "name": "New User",
             },
         ],
-        "subject": f"{verification_code} is your verification code - Haha Labs",
-        "htmlContent": f"<html><head><title>Verification code requested</title></head><body><p>Hello,</p><p>You are requesting a password change. Please enter the code below in our app in 10 minutes:</p><p><strong>Your Verification Code: {verification_code}</strong></p><p>If you did not request this code, you can safely ignore this email. </p><p>Best regards,</p><p>Haha.Labs</p></body></html>",
+        "subject": f"{verification_code} is your verification code - Tunnl",
+        "htmlContent": f"<html><head><title>Verification code requested</title></head><body><p>Hello,</p><p>You are requesting a password change. Please enter the code below in our app in 10 minutes:</p><p><strong>Your Verification Code: {verification_code}</strong></p><p>If you did not request this code, you can safely ignore this email. </p><p>Best regards,</p><p>The Tunnl Team 🚀✨ </p></body></html>",
     }
 
     try:

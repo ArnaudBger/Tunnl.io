@@ -21,6 +21,7 @@ from random import randint
 from django.utils import timezone
 from .encryption import decrypt_private_key
 from .readPost import readPost
+from .readImpression import readImpression
 
 
 class LoginView(APIView):
@@ -155,11 +156,11 @@ class DeleteUser(APIView):
 class CheckLikesForInsPost(APIView):
     def post(self, request):
         url = request.data['url']
-        likes = readPost(url)
+        likes = readImpression(url)
 
         response = Response()
         response.data = {
-            'message': f'{likes}'
+            'likes': f'{likes}'
         }
         return response
 
