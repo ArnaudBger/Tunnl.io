@@ -13,7 +13,6 @@ export default function Contracts() {
       </View>
     );
     if (error) return <Text>Error : {error.message}</Text>;
-    
     // Categorize deals
     const activeDeals = deals.filter(deal => deal.status == '1');
     const activeDealsLength = Object.keys(activeDeals).length;
@@ -52,6 +51,7 @@ export default function Contracts() {
           {renderDeals(doneDeals, `(${doneDealsLength}) COMPLETED`)}
           {renderDeals(failedDeals, `(${failedDealsLength}) FAILED`)}
           <Text style={styles.poweredBy}>Powered by The Graph</Text>
+          <View style={{ height: 100 }} />
         </View>
     );
 }
