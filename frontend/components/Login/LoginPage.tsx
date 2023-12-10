@@ -60,7 +60,7 @@ export default function LoginUserPage({ navigation, setState, checklogin }: GetS
         <>
             {loginStage === "email" && (
                 <View style={styles.container}>
-                    <Text style={styles.title}>HAHA</Text>
+                    <Text style={styles.title}>Tunnl.io</Text>
                     <Text style={styles.subtitle}>
                         Smart agreements that pay automatically when reached
                     </Text>
