@@ -154,7 +154,7 @@ class DeleteUser(APIView):
 
 
 class CheckLikesForInsPost(APIView):
-    def post(self, request, url):
+    def get(self, request, url):
         url = str(url)
         likes = readImpression("https://www.instagram.com/p/" + url)
 
