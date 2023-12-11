@@ -3,10 +3,7 @@ const fs = require("fs")
 // Loads environment variables from .env.enc file (if it exists)
 require("@chainlink/env-enc").config()
 
-
-let postURL = "https://api.twitter.com"
-let impressionsTarget = 100000
-let dealID=0
+let postURL = "https://www.instagram.com/p/C0ZsIBAqxnV"
 
 const Location = {
   Inline: 0,
@@ -15,12 +12,6 @@ const Location = {
 
 const CodeLanguage = {
   JavaScript: 0,
-}
-
-const ReturnType = {
-  uint256: "uint256",
-  uint256: "uint256",
-  uint256: "uint256",
 }
 
 // Configure the request by setting the fields below
@@ -38,14 +29,10 @@ const requestConfig = {
   // Secrets can be accessed within the source code with `secrets.varName` (ie: secrets.apiKey). The secrets object can only contain string values.
   // Per-node secrets objects assigned to each DON member. When using per-node secrets, nodes can only use secrets which they have been assigned.
   // Args (string only array) can be accessed within the source code with `args[index]` (ie: args[0]).
-  args: [impressionsTarget, postURL],
+  args: [postURL],
   // Expected type of the returned value
-  expectedReturnType: ReturnType.Buffer,
-  // Redundant URLs which point to encrypted off-chain secrets
-  secrets: {
-    // DON level API Keys
-    // instagramApiKey: process.env.INSTAGRAM_API_KEY,
-  },
+  expectedReturnType: "uint256",
+
   // Per-node secrets objects assigned to each DON member.
   // When using per-node secrets, nodes can only use secrets which they have been assigned.
   perNodeSecrets: [],

@@ -40,7 +40,6 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   uint256 public s_upkeepCounter;
   uint256 public s_responseCounter;
 
-
   event OCRResponse(bytes32 indexed requestId, bytes result, bytes err);
 
   /**
@@ -109,11 +108,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
     uint256 brandAmount,
     uint256 treasuryAmount
   );
-  event DealCompleted(
-    uint256 indexed dealId,
-    uint256 influencerAmount,
-    uint256 brandAmount,
-    uint256 treasuryAmount);
+  event DealCompleted(uint256 indexed dealId, uint256 influencerAmount, uint256 brandAmount, uint256 treasuryAmount);
 
   constructor(
     address router,
@@ -165,25 +160,24 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
    * second element contains custom bytes data which is passed to performUpkeep when it is called by Automation.
    */
   // Refactored checkUpkeep function
-    function checkUpkeep(bytes memory) public view override returns (bool upkeepNeeded, bytes memory) {
-        for (uint256 i = 0; i < performDeals.length; i++) {
-            uint256 dealId = performDeals[i];
-            DealDeadlines storage deadlines = dealDeadlines[dealId];
-            if (block.timestamp >= deadlines.performDeadline && dealBasics[dealId].status == DealStatus.Active) {
-                return (true, abi.encode(dealId, i));
-            }
-        }
-        return (false, bytes(""));
+  function checkUpkeep(bytes memory) public view override returns (bool upkeepNeeded, bytes memory) {
+    for (uint256 i = 0; i < performDeals.length; i++) {
+      uint256 dealId = performDeals[i];
+      DealDeadlines storage deadlines = dealDeadlines[dealId];
+      if (block.timestamp >= deadlines.performDeadline && dealBasics[dealId].status == DealStatus.Active) {
+        return (true, abi.encode(dealId, i));
+      }
+    }
+    return (false, bytes(""));
   }
 
   // Refactored performUpkeep function
-    function performUpkeep(bytes calldata performData) external override {
-        (uint256 dealId, uint256 index) = abi.decode(performData, (uint256, uint256));
-        (bool upkeepNeeded, ) = checkUpkeep("");
-        require(upkeepNeeded, "Condition not met");
-        _executeUpkeep(dealId, index);
-    }
-    
+  function performUpkeep(bytes calldata performData) external override {
+    (uint256 dealId, uint256 index) = abi.decode(performData, (uint256, uint256));
+    (bool upkeepNeeded, ) = checkUpkeep("");
+    require(upkeepNeeded, "Condition not met");
+    _executeUpkeep(dealId, index);
+  }
 
   function _executeUpkeep(uint256 dealId, uint256 index) internal {
     // Store the dealId with the current upkeep counter
@@ -195,11 +189,11 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
   }
 
   // Refactored _removeDealFromCheckList function
-    function _removeDealFromCheckList(uint256 index) internal {
-        require(index < performDeals.length, "Deal not found in the list");
-        performDeals[index] = performDeals[performDeals.length - 1];
-        performDeals.pop();
-    }
+  function _removeDealFromCheckList(uint256 index) internal {
+    require(index < performDeals.length, "Deal not found in the list");
+    performDeals[index] = performDeals[performDeals.length - 1];
+    performDeals.pop();
+  }
 
   function _prepareRequest(uint256 dealId) internal view returns (FunctionsRequest.Request memory) {
     FunctionsRequest.Request memory req;
@@ -209,9 +203,8 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
 
     DealDetails storage details = dealDetails[dealId];
 
-    string[] memory args = new string[](2);
-    args[0] = Strings.toString(details.impressionsTarget);
-    args[1] = details.postURL;
+    string[] memory args = new string[](1);
+    args[0] = details.postURL;
     req.setArgs(args);
 
     return req;
@@ -231,23 +224,37 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
 
     s_responseCounter = s_responseCounter + 1;
 
-    uint256 brandPercentage;
+    uint256 totalImpressions;
 
-    (brandPercentage) = abi.decode(response, (uint256));
+    (totalImpressions) = abi.decode(response, (uint256));
 
     DealBasics storage basics = dealBasics[dealId];
+    require(basics.status != DealStatus.Done, "Deal already ended.");
 
-    uint256 treasuryPercentage = 4;
+    DealDetails storage details = dealDetails[dealId];
+    DealDeadlines storage deadlines = dealDeadlines[dealId];
 
-    uint256 brandAmount = (basics.brandDeposit * brandPercentage) / 100;
-    uint256 treasuryAmount = (basics.brandDeposit * treasuryPercentage) / 100;
-    uint256 influencerAmount = basics.brandDeposit - brandAmount - treasuryAmount;
+    bool reachedGoal = details.impressionsTarget <= totalImpressions;
+    bool expired = !reachedGoal && deadlines.performDeadline > block.timestamp;
+    require(reachedGoal || expired, "Not time for payments.");
+
+    uint256 treasuryAmount = (basics.brandDeposit * 10) / 100; //Treasury always takes 10%
+    uint256 availableAmount = basics.brandDeposit - treasuryAmount;
+    uint256 influencerAmount = 0;
+    uint256 brandAmount = 0;
+
+    if (reachedGoal) {
+      influencerAmount = availableAmount;
+    } else {
+      influencerAmount = (((totalImpressions * 100) / details.impressionsTarget) * availableAmount) / 100;
+      brandAmount = availableAmount - influencerAmount;
+    }
 
     _payAddress(basics.influencer, influencerAmount);
     _payAddress(basics.brand, brandAmount);
     _payAddress(hahaLabsTreasury, treasuryAmount);
-
     basics.status = DealStatus.Done;
+
     emit DealCompleted(dealId, influencerAmount, brandAmount, treasuryAmount);
   }
 
@@ -355,11 +362,7 @@ contract InfluencerMarketingContract is FunctionsClient, ConfirmedOwner, Automat
       expectedContentHash: _expectedContentHash
     });
 
-    emit DealCreated(nextDealId,
-    dealBasics[nextDealId], 
-    dealDeadlines[nextDealId],
-    dealDetails[nextDealId]
-    );
+    emit DealCreated(nextDealId, dealBasics[nextDealId], dealDeadlines[nextDealId], dealDetails[nextDealId]);
 
     nextDealId++;
   }

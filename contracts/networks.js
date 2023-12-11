@@ -1,4 +1,4 @@
-const { ethers } = require('ethers');
+const { ethers } = require("ethers")
 
 // All supported networks and related contract addresses are defined here.
 //
@@ -121,7 +121,7 @@ const networks = {
     ],
   },
   avalancheFuji: {
-    url: process.env.AVALANCHE_FUJI_RPC_URL || "UNSET",
+    url: "https://avalanche-fuji.infura.io/v3/2154a2e0bb8941d1ab13f80fd7b7b05b" || "UNSET",
     gasPrice: undefined,
     nonce: undefined,
     accounts,
@@ -144,8 +144,8 @@ const networks = {
     accounts,
     confirmations: 1,
     nativeCurrencySymbol: "ETH",
-    linkToken: "0x94d3C68A91C972388d7863D25EDD2Be7e2F21F21",
-    functionsRouter: "0xCbfD616baE0F13EFE0528c446184C9C0EAa8040e",
+    linkToken: "0xb892720B791da724E9d3E61a02Ca6BA96E92A116",
+    functionsRouter: "0xeE069698A53d3FcB2751dac63C0fAA16b754D8BD",
     donId: "local-functions-testnet",
   },
 }
