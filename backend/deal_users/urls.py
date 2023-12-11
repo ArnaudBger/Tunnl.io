@@ -14,7 +14,7 @@ urlpatterns = [
     path('register/completeemailregistration/',
          CompleteEmailRegistrationView.as_view()),
 
-    path('checkLikesForInsPost/', CheckLikesForInsPost.as_view()),
+    path('checkLikesForInsPost/<str:url>', CheckLikesForInsPost.as_view()),
     path('update/username/',
          UpdateUserNameView.as_view()),
     path('update/userpassword/',
